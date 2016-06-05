@@ -1,0 +1,56 @@
+//Dorothy2
+//caption=HTML_input
+//version=1.0
+//hint=test
+//match=
+//author=xor
+//path=common\HTML
+//end
+/*
+<INPUT
+ACCESSKEY=key
+ALIGN=LEFT | CENTER | RIGHT
+ALT=text
+CLASS=classname
+DISABLED
+DYNSRC=url
+ID=value
+LANG=language
+LANGUAGE=JAVASCRIPT | JSCRIPT | VBSCRIPT | VBS 
+LOWSRC=url
+MAXLENGTH=n
+NAME=name
+READONLY
+SIZE=n
+SRC=url
+STYLE=css1-properties
+TABINDEX=n
+TITLE=text
+TYPE=BUTTON | CHECKBOX | FILE | HIDDEN | IMAGE | PASSWORD | RADIO | RESET | SUBMIT | TEXT
+VALUE=value
+event = script
+>
+*/
+
+function HTML_input(source){
+	this.ACCESSKEY = (source.match(/\s+ACCESSKEY\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.ALIGN = (source.match(/\s+ALIGN\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4).toUpperCase():'';
+	this.ALT = (source.match(/\s+ALT\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.CLASS = (source.match(/\s+CLASS\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.DISABLED = (source.match(/\s+DISABLEDY\s*/i))?true:false;
+	this.DYNSRC = (source.match(/\s+DYNSRC\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.ID = (source.match(/\s+ID\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.LANG = (source.match(/\s+LANGY\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.LANGUAGE = (source.match(/\s+LANGUAGE\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4).toUpperCase():'';
+	this.LOWSRC = (source.match(/\s+LOWSRC\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.MAXLENGTH = (source.match(/\s+MAXLENGTH\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.NAME = (source.match(/\s+NAME\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.READONLY = (source.match(/\s+READONLY\s*/i))?true:false;
+	this.SIZE = (source.match(/\s+SIZE\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.SRC = (source.match(/\s+SRC\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.STYLE = (source.match(/\s+STYLE\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.TABINDEX = (source.match(/\s+TABINDEX\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.TITLE = (source.match(/\s+TITLE\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.TYPE = (source.match(/\s+TYPE\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4).toUpperCase():'';
+	this.VALUE = (source.match(/\s+VALUE\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+}

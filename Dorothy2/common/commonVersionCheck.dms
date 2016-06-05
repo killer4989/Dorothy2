@@ -1,0 +1,11 @@
+//Dorothy2
+//caption=common version check
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=common
+//end
+function commonVersionCheck(name , version){
+	return parseFloat(Dorothy.common[name].version) >= parseFloat(version);
+}

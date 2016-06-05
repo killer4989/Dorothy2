@@ -1,0 +1,129 @@
+//Dorothy2
+//caption=zlib
+//version=1.00
+//hint=zlib 1.2.3
+//match=
+//author=xor
+//path=common
+//end
+function zlib(){
+	this.dll = new DynaCall;
+	var dllPath = Dorothy.path + 'bin\zlib1.dll';
+	this.dll.register(dllPath,'zlibVersion'	,'f=s','r=s');
+	this.dll.register(dllPath,'deflateInit_'	,'f=s','i=susu'	,'r=t');
+	this.dll.register(dllPath,'deflate'	,'f=s','i=susu'	,'r=t');
+	this.dll.register(dllPath,'deflateEnd'	,'f=s','i=ssu'	,'r=t');
+	this.dll.register(dllPath,'inflateInit_'	,'f=s','i=ssu'	,'r=t');
+	this.dll.register(dllPath,'inflateInit2_'	,'f=s','i=susu'	,'r=t');
+	this.dll.register(dllPath,'inflate'	,'f=s','i=susu'	,'r=t');
+	this.dll.register(dllPath,'inflateEnd'	,'f=s','i=ssu'	,'r=t');
+
+	this.z_stream = new Struct(
+		'next_in:s',
+		'avail_in:u',
+		'total_in:l',
+
+		'next_out:s',
+		'avail_out:u',
+		'total_out:l',
+
+		'msg:s',
+		'state:s',
+
+		'zalloc:p',
+		'zfree:p',
+		'opaque:p',
+
+		'data_type:u',
+		'adler:l',
+		'reserved:l'
+	);
+
+	this.z_stream.zalloc = null;
+	this.z_stream.zfree  = null;
+	this.z_stream.opaque = null;
+
+
+
+	ZLIB_VERSION 		= new StringBuffer ('1.2.3');
+	ZLIB_VERNUM 		= 0x1230;
+
+
+	Z_NO_COMPRESSION	=   0;
+	Z_BEST_SPEED		=   1;
+	Z_BEST_COMPRESSION	=   9;
+	Z_DEFAULT_COMPRESSION	=  -1;
+
+
+	Z_NO_FLUSH      	= 0;
+	Z_PARTIAL_FLUSH 	= 1;
+	Z_SYNC_FLUSH    	= 2;
+	Z_FULL_FLUSH    	= 3;
+	Z_FINISH        	= 4;
+	Z_BLOCK         	= 5;
+
+
+	Z_OK            	= 0;
+	Z_STREAM_END    	= 1;
+	Z_NEED_DICT     	= 2;
+	Z_ERRNO        		= (-1);
+	Z_STREAM_ERROR 		= (-2);
+	Z_DATA_ERROR   		= (-3);
+	Z_MEM_ERROR    		= (-4);
+	Z_BUF_ERROR    		= (-5);
+	Z_VERSION_ERROR 	= (-6);
+
+
+	Z_FILTERED            	= 1;
+	Z_HUFFMAN_ONLY        	= 2;
+	Z_RLE                 	= 3;
+	Z_FIXED               	= 4;
+	Z_DEFAULT_STRATEGY    	= 0;
+
+
+	Z_BINARY   		= 0;
+	Z_TEXT     		= 1;
+	Z_ASCII    		= Z_TEXT;
+	Z_UNKNOWN  		= 2;
+
+
+	Z_DEFLATED   		= 8;
+
+
+	Z_NULL  		= 0;
+
+	MAX_WBITS		 = 15;
+}
+,
+zlib.prototype.zlibVersion = function(){
+	return this.dll.zlibVersion();
+}
+,
+zlib.prototype.deflateInit = function(level){
+	return this.dll.deflateInit_(this.z_stream , level , ZLIB_VERSION , this.z_stream.sizeOf());
+}
+,
+zlib.prototype.deflate = function(flush){
+	return this.dll.deflate(this.z_stream , flush , ZLIB_VERSION , this.z_stream.sizeOf());
+}
+,
+zlib.prototype.deflateEnd = function(){
+	return this.dll.deflateEnd(this.z_stream , ZLIB_VERSION , this.z_stream.sizeOf());
+}
+,
+zlib.prototype.inflateInit = function(){
+	return this.dll.inflateInit_(this.z_stream , ZLIB_VERSION , this.z_stream.sizeOf());
+}
+,
+zlib.prototype.inflateInit2 = function(windowBits){
+	return this.dll.inflateInit2_(this.z_stream , windowBits , ZLIB_VERSION , this.z_stream.sizeOf());
+}
+,
+zlib.prototype.inflate = function(flush){
+	return this.dll.inflate(this.z_stream , flush , ZLIB_VERSION , this.z_stream.sizeOf());
+}
+,
+zlib.prototype.inflateEnd = function(){
+	return this.dll.inflateEnd(this.z_stream , ZLIB_VERSION , this.z_stream.sizeOf());
+}
+

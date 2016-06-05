@@ -1,0 +1,32 @@
+//Dorothy2
+//caption=stack
+//version=1.0
+//hint=stack class
+//match=
+//author=xor
+//path=common
+//end
+//===============================================
+//stack class
+//===============================================
+function stack(){
+	this.pool = new Strings();
+}
+,
+stack.prototype.push = function(v){
+	this.pool.add(v);
+}
+,
+stack.prototype.pop = function(){
+	var v = this.pool(this.pool.count - 1);
+	this.pool.delete(this.pool.count - 1);
+	return v;
+}
+,
+stack.prototype.top = function(){
+	return this.pool(this.pool.count - 1);
+}
+,
+stack.prototype.empty = function(){
+	return (this.pool.count == 0)? true:false;
+}

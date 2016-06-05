@@ -1,0 +1,14 @@
+//Dorothy2
+//caption=オブジェクトのメンバを表示
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=system
+//end
+function obj_dsp(obj){
+	var prope = obj.getProperties();
+	var metho = obj.getMethods();
+	var even = obj.getEvents();
+	textArea('object' , "Properties\n" + prope + "\nMethods\n" + metho + "\nEvents\n" + even);
+}

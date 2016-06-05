@@ -1,0 +1,39 @@
+//Dorothy2
+//caption=openDialog
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=common
+//end
+function openDialog(title , initialdir , fileName , filter , filterIndex , defaultExt , options){
+	var dia = new VCLOpenDialog();
+	if(!(isUndefined(title) || isNull(title))){
+		dia.Title = title;
+	}
+	if(!(isUndefined(initialdir) || isNull(initialdir))){
+		dia.Initialdir = initialdir;
+	}
+	if(!(isUndefined(fileName) || isNull(fileName))){
+		dia.FileName = fileName;
+	}
+	if(!(isUndefined(filter) || isNull(filter))){
+		dia.Filter = filter;
+	}
+	if(!(isUndefined(filterIndex) || isNull(filterIndex))){
+		dia.FilterIndex = filterIndex;
+	}
+	if(!(isUndefined(defaultExt) || isNull(defaultExt))){
+		dia.DefaultExt = defaultExt;
+	}
+	if(!(isUndefined(options) || isNull(options))){
+		//dia. = ;
+	}
+
+	if(dia.execute()){
+		return dia.FileName;
+	}
+	else{
+		return false;
+	}
+}

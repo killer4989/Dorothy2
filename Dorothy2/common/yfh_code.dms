@@ -1,0 +1,137 @@
+//Dorothy2
+//caption=yfh_code
+//version=0.5
+//hint=yourfilehost
+//match=
+//author=xor
+//path=common
+//priority=
+//end
+function yfh_code(){
+	//debug =true;
+	common_load('bit','StringBufferExtension','stack','GIF2','decodeGIF','download');
+	http = download('http://www.yourfilehost.com/captcha.php?');
+	if(http.responseHeader.code != 200){
+		return false;
+	}
+	println('cookie=' + http.responseHeader.cookie);
+	var cookie = new IrvineCookieManager();
+	cookie.setCookie('www.yourfilehost.com' , http.responseHeader.cookie);
+	
+	data = http.data;
+
+	if(new File(Dorothy.path + 'bin\imgctl.dll').exists()){
+		dll_flg = true;
+		println('GIF decode (dll)');
+		common_load('imgctl');
+		var g = new imgctl();
+		gdata = new StringBuffer(data);
+		g.MtoDIB(gdata);
+		g.HeadDIB();
+		width = g.bmih.biWidth;
+		height = g.bmih.biHeight;
+
+		g.GetDIB();
+
+		println('コード解析中');
+		//key = 16580348;
+		//key = 63.toChar();
+		key = 0.toChar();
+
+		a = new Array(width);
+		for(i = 0;i < a.length ; i++){
+			a[i] = 0;
+		}
+		c = 11;
+		for(y = 0 ; y < height ; y++){
+			s = '';
+			var wy = width * y;
+			for(x = 0 ; x < width ; x++){
+				a[x] += (g.pvData(x + wy) != key)?0:1;
+				s += (g.pvData(x + wy) != key)?'i':'I';
+			}
+			print_debug(c++ + s);
+		}
+		g.DeleteDIB();
+	}
+	else{
+		dll_flg =false;
+		var GIF = gif(data);
+		ret = decodeGIF(GIF);
+		width = parseInt(GIF.Block.Image_Block.Image_Width);
+		println('コード解析中');
+		//key = 63;
+		key = 0;
+		a = new Array(width);
+		for(i = 0;i < a.length ; i++){
+			a[i] = 0;
+		}
+		c = 11;
+		for(i = 0 ; i < ret.length ; i+=  width){
+			s = '';
+			for(j = 0 ; j < width ; j++){
+				s = s  + ((ret[i+j] != key)?'i':'I');
+				a[j]=a[j]+((ret[i+j] != key)?0:1);
+			}
+			print_debug(c ++ + s);
+		}
+	}
+	//println(a);
+	/*for(i = 0 ; i < ret.length ; i+=  width){
+		s = '';
+		for(j = 0 ; j < width ; j++){
+			s = s  + ' ' + ret[i+j];
+		}
+		println(s);
+	}*/
+	c0 = [8,10,9,9,8,7,5,5,7,6,7,7,10,10,13,15,16,16,18,19,17,15,13,9];
+	c1 = [2,2,2,2,19,0,0,0,1,6,9,15,23,24];
+	c2 = [3,3,5,5,8,7,8,8,9,8,8,7,9,10,11,10,12,13,12,12,8,4];
+	c3 = [2,1,4,3,2,2,3,4,8,9,9,12,13,14,13,11,12,10,12,11,6,4];
+	c4 = [2,3,4,3,4,3,4,3,4,20,22,23,0,0,0,4,8,11,23,2,2,2,2];
+	c5 = [2,2,3,5,4,5,5,8,9,8,8,8,8,7,8,11,9,10,9,10,10,7];
+	c6 = [3,4,7,6,6,6,4,4,5,7,8,12,13,14,13,14,16,15,14,13,10,6];
+	c7 = [1,2,5,10,11,10,8,10,9,8,7,7,6,4,2,1,2,2,3,2,2,1];
+	c8 = [5,10,12,6,6,7,8,8,9,8,8,7,8,8,9,9,8,9,8,9,7,3,3];
+	c9 = [7,9,12,14,14,16,13,12,12,11,8,6,4,3,4,4,5,6,6,6,6,6];
+	cn = [c0,c1,c2,c3,c4,c5,c6,c7,c8,c9];
+	sn = new Array(10);
+	i = 0;
+	gifno = '';
+	for(m = 0 ; m < 4 ; m++){
+		while(a[i] == 0){
+			i++;
+		}
+		j = i;
+		for(j = 0 ; j<10 ; j++){
+			s = 0;
+			for(k = 0 ; k < cn[j].length ; k++){
+				if(cn[j][k] == a[i+k]){
+					s++;
+				}
+				else if(cn[j][k] == a[i+k]-1){
+					s++;
+				}
+				else if(cn[j][k] == a[i+k]+1){
+					s++;
+				}
+			}
+			//println('a' + j + '= '+ a.slice(i , i+cn[j].length));
+			//println('c' + j + '= '+ cn[j]);
+			//println(s);
+			sn[j]= s;
+		}
+		//println(sn);
+		ans = 0;
+		for(j = 0 ; j < 10 ; j++){
+			if(sn[ans] < sn[j]){
+				ans = j;
+			}
+		}
+		//println('結果＝' + ans);
+		i += cn[ans].length + 1;
+		gifno += ans;
+	}
+	println('code=' + gifno);
+	return gifno;
+}

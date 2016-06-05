@@ -1,0 +1,41 @@
+//Dorothy2
+//caption=à≥èkÅ^âìÄ
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=system\menu\set
+//end
+function(){
+	var frm = new VCLForm(true);
+
+	frm.loadFromFile(dorothy2_system_menu_set + 'Archive.dfm');
+
+	var f = new File(dorothy2_bin + '7za.exe');
+	if(f.exists()){
+		frm.Button1.Enabled = true;
+	}
+
+	frm.ini = new Ini(dorothy2_system + 'setting.ini');
+	frm.Edit1.Text = frm.ini.read('arc' , 'compression' , '');
+	frm.Edit2.Text = frm.ini.read('arc' , 'extract' , '');
+
+	frm.Button1.onClick = function(){
+		frm.Edit1.Text = '"' + dorothy2_bin + '7za" a -tzip "%s" "%s"';
+		frm.Edit2.Text = '"' + dorothy2_bin + '7za" x "%s" -o"%s"';
+	};
+
+	frm.CancelBtn.onClick = function(){
+		frm.close();
+	};
+	frm.OKBtn.onClick = function(){
+		COMPRESSION = frm.Edit1.Text;
+		EXTRACT = frm.Edit2.Text;
+		frm.ini.write('arc' , 'compression' , frm.Edit1.Text);
+		frm.ini.write('arc' , 'extract' , frm.Edit2.Text);
+		frm.ini.update();
+	};
+	frm.showModal();
+	//eventLoop();
+
+}

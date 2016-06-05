@@ -1,0 +1,15 @@
+//Dorothy2
+//caption=debug_off
+//version=1.0
+//hint=デバッグ用off
+//match=
+//author=xor
+//generator=
+//path=common
+//end
+function debug_off(){
+	debug_info = function(){};
+	debug_msg = function(){};
+	debug_object = function(){};
+	debug_view = function(){};
+}

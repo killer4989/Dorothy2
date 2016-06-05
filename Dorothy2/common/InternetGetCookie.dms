@@ -1,0 +1,30 @@
+//Dorothy2
+//caption=InternetGetCookie
+//version=0.02
+//hint=Cookie = InternetGetCookie(url [,cookie_name])
+//match=
+//author=oz
+//generator=
+//path=common
+//end
+function InternetGetCookie(url, cookie_name) {
+	var dynacall = new DynaCall;
+	dynacall.register('wininet.dll', 'InternetGetCookie', 'i=sss4', 'f=s', 'r=b');
+	var buf = new StringBuffer(8200);
+	var size = new Number(buf.length);
+	result = dynacall.InternetGetCookie(url, null, buf, size);
+	if (!result)
+		return null;
+	for (var i = 0; i < buf.length - 1; i++) {
+		if (buf.charCodeAt(i) == 0) {
+			buf.length = i;
+			break;
+		}
+	}
+	buf = buf + ';';
+	if (isUndefined(cookie_name) || cookie_name == '')
+		return buf.toString();
+	if (buf.toString().match('(' + cookie_name + '=[^;]+;)') == null)
+		return '';
+	return RegExp.$1;
+}

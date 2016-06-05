@@ -1,0 +1,99 @@
+//Dorothy2
+//caption=post
+//version=1.05
+//hint=HTTP = post(url , post_data [,autoRedirect:Boolean [,requestHeader:Object]])
+//match=
+//author=xor
+//path=common
+//end
+function post(url,post_data,redirect,rHeader){
+	
+	var http = new HTTP;
+	var data = '';
+	http.debug = debug;
+	http.version = (folderdata.HttpVersion)? '1.1' : '1.0';
+	http.timeout = folderdata.HttpTimeout;
+	http.proxy = urlinfo.proxy;
+	http.requestHeader['User-Agent'] = headers['User-Agent'];
+	var cookie = new IrvineCookieManager;
+	http.requestHeader['Cookie'] = cookie.getCookie(url);
+	//http.requestHeader['Connection']='keep-alive';
+	//http.requestHeader['Connection']='close';
+
+	if(folderdata.UrlEncode){
+		url = decodeURI(url);
+		url = encodeURI(url);
+	}
+
+	if(!isUndefined(redirect)){
+		http.autoRedirect = redirect;
+	}
+	if(!isUndefined(rHeader)){
+		var i;
+		for(i in rHeader){
+			http.requestHeader[i] = rHeader[i];
+		}
+	}
+
+	url = new URL(url);
+
+	//oz氏のソースを拝借
+
+
+	var buf = new StringBuffer(1024);
+	var size = 0;
+	try {
+		do{
+			http.request('POST', url.url, post_data);
+			http.response();
+			if((http.responseHeader.code == 301
+			    || http.responseHeader.code == 302
+			    || http.responseHeader.code == 303
+			   )&& redirect){
+				url = new URL(url.expand(http.responseHeader.location));
+				 continue;
+			}
+				
+			if(http.responseHeader.code == 200) {
+				if (http.responseHeader.hasKey('transfer-encoding')
+				 && http.responseHeader['transfer-encoding'] == 'chunked') {
+					buf = http.readln();
+					buf.toString().match(/(^[0-9a-f]+)/i);
+					if (buf.toString().match(/^([0-9a-f]+)/i) != null) {
+						size = parseInt('0x' + RegExp.$1);
+					}
+					while (size > 0) {
+						data += http.read(size);
+						http.readln();
+						buf = http.readln();
+						if (buf.toString().match(/^([0-9a-f]+)/i) == null) {
+							//data = '';
+							break;
+						}
+						size = parseInt('0x' + RegExp.$1);
+					}
+				} else {
+					data = http.read();
+				}
+			}
+		}while(false);
+	}
+	catch (e) {
+		println('ソケットエラー>' + e);
+	}
+	finally {
+		http.disconnect();
+	}
+
+
+
+
+	//try{
+	//	data = http.post(url , post_data);
+	//}
+	//catch(e){
+	//	println('ソケットエラー>' + e);
+	//}
+	http['data'] = data;
+	return http;
+}

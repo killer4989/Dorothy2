@@ -1,0 +1,47 @@
+//Dorothy2
+//caption=test2_download
+//version=1.02
+//hint=HTTP =GETでテスト
+//match=
+//author=xor
+//generator=
+//path=common
+//end
+function test2_download(url,redirect,rHeader){
+	var http = new HTTP;
+	var data = '';
+	http.debug = debug;
+	http.version = (folderdata.HttpVersion)? '1.1' : '1.0';
+	http.timeout = folderdata.HttpTimeout;
+	http.proxy = urlinfo.proxy;
+	http.requestHeader['User-Agent'] = headers['User-Agent'];
+	var cookie = new IrvineCookieManager;
+	http.requestHeader['Cookie'] = cookie.getCookie(url);
+	if(folderdata.UrlEncode){
+		url = decodeURI(url);
+		url = encodeURI(url);
+	}
+
+	if(!isUndefined(redirect)){
+		http.autoRedirect = redirect;
+	}
+	if(!isUndefined(rHeader)){
+		var i;
+		for(i in rHeader){
+			http.requestHeader[i] = rHeader[i];
+		}
+	}
+
+	try{
+		http.request('GET',url);
+		http.response();
+	}
+	catch(e){
+		println('ソケットエラー>' + e);
+	}
+	finally{
+		http.close();
+	}
+	http['data'] = data;
+	return http;
+}

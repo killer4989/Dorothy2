@@ -1,0 +1,29 @@
+//Dorothy2
+//caption=int2bit
+//version=1.0
+//hint=®”‚ğbit•¶š—ñ‚É‚·‚é
+//match=
+//author=xor
+//path=common
+//end
+function int2bit(n){
+	var t = 0;
+	var a = '';
+	if(n == 0){
+		return '0';
+	}
+	while(n != 0){
+		if(t++ == 4){
+			a = ' ' + a;
+			t = 0;
+		}
+		if(n & 1 == 1){
+			a = '1' + a;
+		}
+		else{
+			a = '0' + a;
+		}
+		n = n >>> 1;
+	}
+	return a;
+}

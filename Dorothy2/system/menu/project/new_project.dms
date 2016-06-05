@@ -1,0 +1,250 @@
+//Dorothy2
+//caption=プロジェクト
+//version=1.01
+//hint=
+//match=
+//author=xor
+//path=system\menu\project
+//end
+function(){
+	var file1 = Dialog.openFile('プロジェクトファイルを作る',dorothy2_program + '*.*');
+	if(file1 == null){
+		return;
+	}
+	if(file1.indexOf(dorothy2_path) != 0){
+		return;
+	}
+	
+	var head = script_file_read(file1);
+	var title = head.caption;
+
+	//commonの呼出ファイルをリストアップ
+	var relation = function(filePath){	//手抜き仕様
+		var f = new File(filePath);
+		f.open('r');
+		var s = f.read();
+		var re = new RegExp('common_load\s*\((.*?)\)\s*;','g');
+		var all = re.exec(s);
+		if(all == null){
+			return [];
+		}
+		var i , i2;
+		var out = [];
+		for(i in all){
+			var all2 = all[i].match(/(\(|,)\s*('[^']+'|"[^"]+")/g);
+			for(i2 in all2){
+				all2[i2].match(/["']([^'"]+)["']/);
+				var name = RegExp.$1;
+				out.add('common\' + name + '.dms');
+				var fp = dorothy2_path + 'common\' + name + '.dms';
+				var temp = relation(fp);
+				if(temp != ''){
+					out = out.concat(relation(fp));
+				}
+			}
+		}
+		return out;
+	};
+
+	//フルパスからDorothy2\ 以下のパスを求める
+	var dPath = function(fullPath){
+		var p = fullPath.indexOf(dorothy2_path);
+		if(p == 0){
+			return fullPath.slice(dorothy2_path.length , fullPath.length);
+		}
+		else{
+			return '';
+		}
+	};
+
+	//ドキュメント
+	var docPath = function(fullPath){
+		var  p = dPath(fullPath);
+		p = 'document\program\' + p.slice(p.lastIndexOf('\') + 1 , p.lastIndexOf('.dms')) + '.txt';
+		if(new File(dorothy2_path + p).exists()){
+			return p;
+		}
+		else{
+			return '';
+		}
+	};
+
+	//設定
+	var setPath = function(fullPath){
+		var  p = dPath(fullPath);
+		p = 'setting\' + p.slice(p.lastIndexOf('\') + 1 , p.lastIndexOf('.dms')) + '.set';
+		if(new File(dorothy2_path + p).exists()){
+			return p;
+		}
+		else{
+			return '';
+		}
+	};
+
+	//ユーザー
+	var userPath = function(fullPath){
+		var p = dPath(fullPath);
+		var name = p.slice(p.lastIndexOf('\') + 1 , p.lastIndexOf('.dms'));
+		p = 'user\' + name + '\';
+		var ar = new Array();
+		var dir = new Directory(dorothy2_path + p);
+		if(!dir.exists()){
+			return [];
+		}
+		var file = dir.findFirstFile('*.*');
+		while(file != null){
+			if(file.lastIndexOf('.ini')+4 == file.length){
+				file = dir.findNextFile();
+				continue;
+			}
+			ar.add(p + file);
+			file = dir.findNextFile();
+		}
+		dir.findClose();
+		return ar;
+	};
+
+	//name
+	var namePath = function(fullPath){
+		var p = dPath(fullPath);
+		var name = p.slice(p.lastIndexOf('\') + 1 , p.lastIndexOf('.dms'));
+		return name;
+	};
+
+	//プロジェクト
+	var proPath = function(fullPath){
+		var  p = dPath(fullPath);
+		p = dorothy2_project + p.slice(p.lastIndexOf('\') + 1 , p.lastIndexOf('.dms')) + '.d2p';
+		return p;
+	};
+
+	//プロジェクトdir
+	var prodirPath = function(fullPath){
+		var  p = dPath(fullPath);
+		p = dorothy2_project + p.slice(p.lastIndexOf('\') + 1 , p.lastIndexOf('.dms'));
+		return p;
+	};
+
+
+	var relay = new Array();
+	relay.add(dPath(file1));
+	relay = relay.concat(relation(file1));
+	relay = relay.concat(docPath(file1));
+	relay = relay.concat(setPath(file1));
+	relay = relay.concat(userPath(file1));
+	relay = relay.sort(function(a , b){return (a>b);});
+	for(i = relay.length - 1 ; i > 0 ;i--){
+		if(relay[i] == relay[i-1]){
+			relay.delete(i);
+		}
+	}
+	if(relay[i] == ''){
+		relay.delete(i);
+	}
+
+	var name = namePath(file1);
+	if(title == ''){
+		title = name;
+	}
+	var dirPath = prodirPath(file1);
+	var dir = new Directory(dirPath);
+	if(!dir.exists()){
+		dir.make();
+	}
+	var t = "\t";
+	var t1 = t;
+	var t2 = t + t;
+	var t3 = t2 + t;
+	var t4 = t2 + t2;
+	var t5 = t4 + t1;
+	var q = "'";
+	var qc = "',";
+
+	var f1 = new File(dirPath + '\' + name + '.d2p');
+	try{
+		if(f1.exists()){
+			f1.remove();
+		}
+		f1.open('w');
+		f1.writeln('//project file');
+		f1.writeln('{');
+		f1.writeln(t1 + "'head':");
+		f1.writeln(t1 + '{');
+		f1.writeln(t2 + "'caption':'" + title + qc);
+		f1.writeln(t2 + "'version':'" + dPath(file1) + qc);
+		f1.writeln(t2 + "'memo':'" + q);
+		f1.writeln(t1 + '},');
+		f1.writeln(t1 + "'data':");
+		f1.writeln(t1 + '[');
+		f1.writeln(t2 + '{');
+		f1.writeln(t3 + "'type':'file',");
+		f1.writeln(t3 + "'Addition':");
+		f1.writeln(t3 + "[");
+		for(i = 0 ; i < relay.length - 1 ; i++){
+			f1.writeln(t4 + q + relay[i] + qc);
+		}
+		f1.writeln(t4 + q + relay[i] + q);
+		f1.writeln(t3 + ']');
+		f1.writeln(t2 + '}');
+		f1.writeln(t1 + ']');
+		f1.writeln('}');
+		f1.close();
+	}
+	catch(e){
+		alert(e);
+		return;
+	}
+	//editor(dirPath + '\' + name + '.d2p');
+	return;
+
+
+	var frm = new VCLForm(true);
+	frm.loadFromFile(dorothy2_system_menu_project + 'Unit10.dfm');
+	frm.CancelBtn.onClick = function(){
+		frm.close();
+	};
+	frm.OKBtn.onClick = function(){
+		var folder = frm.Edit1.Text;
+		if(folder == ''){
+			alert('無効');
+			return;
+		}
+		var dir = new Directory(dorothy2_project + folder);
+		if(dir.exists()){
+			alert('既に在ります');
+			return;
+		}
+		dir.make();
+		var file = new File(dir.path + folder + '.d2pr');
+		try{
+			file.open('w');
+			var s = new Strings();
+			s.add('Dorothy2 Project');
+			s.add('Files');
+			if(frm.CheckBox1.Checked){
+				s.add('program\' + folder + '.dms');
+			}
+			if(frm.CheckBox2.Checked){
+				s.add('setting\' + folder + '.set');
+			}
+			if(frm.CheckBox3.Checked){
+				s.add('document\' + folder + '.txt');
+			}
+			if(frm.CheckBox4.Checked){
+				s.add('project\' + folder + '.setup');
+			}
+			s.add('End');
+			s.add('Initialize');
+			s.add('End');
+			file.write(s.text);
+		}
+		catch(e){
+			alert(e + '-プロジェクトファイル書き込み失敗');
+		}
+		file.close();
+		frm.close();
+	};
+	frm.showModal();
+	eventLoop();
+
+}

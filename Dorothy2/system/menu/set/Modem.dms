@@ -1,0 +1,105 @@
+//Dorothy2
+//caption=ÉÇÉfÉÄÅ^ÉãÅ[É^
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=system\menu\set
+//end
+function(){
+	var frm = new VCLForm(true);
+
+	frm.loadFromFile(dorothy2_system_menu_set + 'Modem.dfm');
+
+	frm.ini = new Ini(dorothy2_system_menu_set + 'Modem.ini');
+	frm.modem = frm.ini.read('user' , 'modem' , '');
+	frm.Edit1.Text = frm.ini.read('user' , 'time1start' , '');
+	frm.Edit2.Text = frm.ini.read('user' , 'time1end' , '');
+	frm.Edit3.Text = frm.ini.read('user' , 'time2start' , '');
+	frm.Edit4.Text = frm.ini.read('user' , 'time2end' , '');
+	frm.Edit5.Text = frm.ini.read('user' , 'time3start' , '');
+	frm.Edit6.Text = frm.ini.read('user' , 'time3end' , '');
+	frm.CheckBox1.Checked = (frm.ini.read('user' , 'active' , '0') == '1' );
+
+	frm.modem_no = 0;
+	var dir = new Directory(dorothy2_system + 'modem\');
+	if(!dir.exists()){
+		dir.make();
+	}
+	frm.ComboBox1.Items.addStrings('ñ¢ê›íË');
+	frm.ComboBox1.filename = new Array;
+	frm.ComboBox1.filename.add('');
+	var f = dir.findFirstFile('*.dms');
+	var i = 0;
+	while(f != null){
+		i++;
+		if(f == frm.modem){
+			frm.modem_no = i;
+			frm.Button1.Enabled = true;
+		}
+		var head = script_file_read(dorothy2_system + 'modem\' + f);
+		frm.ComboBox1.Items.addStrings(head.caption);
+		frm.ComboBox1.filename.add(f);
+		f = dir.findNextFile();
+	}
+	dir.findClose();
+	frm.ComboBox1.ItemIndex = frm.modem_no;
+
+
+	frm.ComboBox1.onClick = function(){
+		if(frm.ComboBox1.ItemIndex == 0){
+			frm.Button1.Enabled = false;
+		}
+		else{
+			frm.Button1.Enabled = true;
+		}
+	};
+
+	frm.Button1.onClick = function(){
+		var f = frm.ComboBox1.filename[frm.ComboBox1.ItemIndex];
+		var d = file_load(dorothy2_system + 'modem\' + f);
+		eval(d);
+		modem_setting();
+	};
+
+	var hhnn = function(){
+		if(!this.Text.match(/^(\d|[01]\d|2[0123]):([0-5]\d)$/)){
+			this.Font.Color = 0x000000FF;
+		}
+		else{
+			this.Font.Color = 0x00000000;
+		}
+	};
+	frm.Edit1.onChange = hhnn;
+	frm.Edit1.onChange = hhnn;
+	frm.Edit2.onChange = hhnn;
+	frm.Edit3.onChange = hhnn;
+	frm.Edit4.onChange = hhnn;
+	frm.Edit5.onChange = hhnn;
+	frm.Edit6.onChange = hhnn;
+
+	frm.Edit1.onChange();
+	frm.Edit2.onChange();
+	frm.Edit3.onChange();
+	frm.Edit4.onChange();
+	frm.Edit5.onChange();
+	frm.Edit6.onChange();
+
+	frm.CancelBtn.onClick = function(){
+		frm.close();
+	};
+	frm.OKBtn.onClick = function(){
+		frm.ini.write('user' , 'modem'      , frm.ComboBox1.filename[frm.ComboBox1.ItemIndex]);
+		frm.ini.write('user' , 'time1start' , frm.Edit1.Text);
+		frm.ini.write('user' , 'time1end'   , frm.Edit2.Text);
+		frm.ini.write('user' , 'time2start' , frm.Edit3.Text);
+		frm.ini.write('user' , 'time2end'   , frm.Edit4.Text);
+		frm.ini.write('user' , 'time3start' , frm.Edit5.Text);
+		frm.ini.write('user' , 'time3end'   , frm.Edit6.Text);
+		frm.ini.write('user' , 'active'     , frm.CheckBox1.Checked ? '1':'0');
+		frm.ini.update();
+	};
+	frm.showModal();
+	//eventLoop();
+
+}

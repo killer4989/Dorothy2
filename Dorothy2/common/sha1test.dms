@@ -1,0 +1,16 @@
+//Dorothy2
+//caption=imgctl
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=common
+//end
+function imgctl(){
+	this.dll = new DynaCall;
+	this.dll.register(Dorothy.path + 'bin\imgctl.dll','ImgctlVersion','f=s','r=h');
+}
+,
+sha1.prototype.Version = function(){
+	return this.dll.ImgctlVersion();
+}

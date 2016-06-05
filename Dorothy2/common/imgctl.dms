@@ -1,0 +1,127 @@
+//Dorothy2
+//caption=imgctl
+//version=1.02
+//hint=imgctl.dllのラッパー
+//match=
+//author=xor
+//path=common
+//end
+/* Image types 
+#define IMG_ERROR	0x00FFFFFF
+#define IMG_UNKNOWN	0x00000000
+#define IMG_BMP		0x00000001
+#define IMG_BITMAP	IMG_BMP
+#define IMG_DIB		IMG_BMP
+#define IMG_RLE		IMG_BMP
+#define IMG_JPEG	0x00000002
+#define IMG_JPE		IMG_JPEG
+#define IMG_JPG		IMG_JPEG
+#define IMG_EXIF	IMG_JPEG
+#define IMG_PNG		0x00000003
+#define IMG_GIF		0x00000004
+#define IMG_TIFF	0x00000005
+#define IMG_TIF		IMG_TIFF
+#define IMG_PIC		0x00000006
+#define IMG_MAG		0x00000007
+#define IMG_MAKI	IMG_MAG
+#define IMG_PCX		0x00000008
+*/
+function imgctl(){
+	this.dll = new DynaCall;
+	this.dll.register(Dorothy.path + 'bin\imgctl.dll','ImgctlVersion'	,'f=s','i=c'	,'r=t');
+	this.dll.register(Dorothy.path + 'bin\imgctl.dll','ImgctlBeta'		,'f=s','i=c'	,'r=t');
+	this.dll.register(Dorothy.path + 'bin\imgctl.dll','GetImageMType'	,'f=s','i=sls'	,'r=l');
+	this.dll.register(Dorothy.path + 'bin\imgctl.dll','MtoDIB'		,'f=s','i=sl'	,'r=h');
+	this.dll.register(Dorothy.path + 'bin\imgctl.dll','DeleteDIB'		,'f=s','i=h'	,'r=b');
+	this.dll.register(Dorothy.path + 'bin\imgctl.dll','HeadDIB'		,'f=s','i=hs'	,'r=b');
+	this.dll.register(Dorothy.path + 'bin\imgctl.dll','PixelDIB'		,'f=s','i=hll'	,'r=l');
+	this.dll.register(Dorothy.path + 'bin\imgctl.dll','GetDIB'		,'f=s','i=hssss','r=b');
+	this.dll.register(Dorothy.path + 'bin\imgctl.dll','DIBto24Bit'		,'f=s','i=h'    ,'r=b');
+
+
+	this.IMG_ERROR 		= 0x00FFFFFF;
+	this.IMG_UNKNOWN 	= 0x00000000;
+	this.IMG_BMP 		= 0x00000001;
+	this.IMG_JPEG 		= 0x00000002;
+	this.IMG_PNG 		= 0x00000003;
+	this.IMG_GIF 		= 0x00000004;
+	this.IMG_TIFF 		= 0x00000005;
+	this.IMG_PIC 		= 0x00000006;
+	this.IMG_MAG 		= 0x00000007;
+	this.IMG_PCX 		= 0x00000008;
+
+	this.BI_RGB 		= 0;
+	this.BI_RLE8 		= 1;
+	this.BI_RLE4 		= 2;
+	this.BI_BITFIELDS 	= 3;
+
+	this.hDIB = 0;
+
+	this.bmih = new Struct(
+		'biSize:u',
+		'biWidth:u',
+		'biHeight:u',
+		'biPlanes:t',
+		'biBitCount:t',
+		'biCompression:u',
+		'biSizeImage:u',
+		'biXPelsPerMeter:u',
+		'biYPelsPerMeter:u',
+		'biClrUsed:u',
+		'biClrImportant:u'
+		);
+}
+,
+imgctl.prototype.version = function(){
+	return this.dll.ImgctlVersion(1);
+}
+,
+imgctl.prototype.beta = function(){
+	return this.dll.ImgctlBeta(1);
+}
+,
+imgctl.prototype.GetImageMType = function(data){
+	var ret = new StringBuffer(40);
+	return this.dll.GetImageMType(data , data.length , ret);
+	//return ret;
+}
+,
+imgctl.prototype.MtoDIB = function(data){
+	this.hDIB = this.dll.MtoDIB(data , data.length);
+	return this.hDIB;
+}
+,
+imgctl.prototype.DeleteDIB = function(){
+	return this.dll.DeleteDIB(this.hDIB);
+}
+,
+imgctl.prototype.HeadDIB = function(){
+	this.dll.HeadDIB(this.hDIB , this.bmih);
+}
+,
+imgctl.prototype.PixelDIB = function(x , y){
+	return this.dll.PixelDIB(this.hDIB , x , y);
+}
+,
+imgctl.prototype.GetDIB = function(){
+	var pdwbmiSize = new Struct('data:u');
+	var pdwDataSize = new Struct('data:u');
+	//データサイズを取得
+	this.dll.GetDIB(this.hDIB , null , pdwbmiSize , null , pdwDataSize);
+	
+	this.pdwbmiSize = pdwbmiSize.data;
+	this.pdwDataSize = pdwDataSize.data;
+
+	this.pbmi = new StringBuffer(this.pdwbmiSize , 0);
+	this.pvData = new StringBuffer(this.pdwDataSize , 0);
+	//データ取得
+	var ret = this.dll.GetDIB(this.hDIB , this.pbmi , pdwbmiSize , this.pvData , pdwDataSize);
+	if(!ret){
+		println('GetDIB error');
+		exit();
+	}
+}
+,
+imgctl.prototype.DIBto24Bit = function(){
+	return this.dll.DIBto24Bit(this.hDIB);
+}

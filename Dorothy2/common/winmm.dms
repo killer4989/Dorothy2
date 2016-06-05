@@ -1,0 +1,43 @@
+//Dorothy2
+//caption=winmm
+//version=1.00
+//hint=
+//match=
+//author=xor
+//path=common
+//end
+function winmm(){
+	this.dll = new DynaCall;
+	this.dll.register('winmm.dll','PlaySoundA'	,'f=s','i=sll'	,'r=h');
+
+}
+,
+winmm.prototype.PlaySound = function(pszSound , hmod , fdwSound){
+	return this.dll.PlaySoundA(pszSound , hmod , fdwSound);
+//pszSound ファイル名又はＩＤ名
+//hmod インスタンスハンドル、ファイルの時は０
+//fdwSound 演奏方法
+/*
+SND_APPLICATION = &H80             アプリケーション定義のサウンドを再生
+SND_ALIAS = &H10000                pszSoundは、システムイベント名 (SND_FILENAME、またはSND_RESOUCEと組み合わせない)
+SND_ALIAS_ID = &H110000            定義済みサウンドID
+SND_ASYNC = &H1                    非同期で再生
+SND_FILENAME = &H20000             pszSoundはファイル名
+SND_LOOP = &H8                     繰り返し再生(中断する場合はファイル名にvbNullStringを指定)
+SND_MEMORY = &H4                   サウンドデータをメモリ中にロード(pszSoundはメモリ領域のアドレス)
+SND_NODEFAULT = &H2                指定のファイルがなくてもデフォルトを実行
+SND_NOSTOP = &H10                  ほかに再生中の場合は何もしない
+SND_NOWAIT = &H2000                サウンドドライバを使用中のとき、演奏しないですぐ戻る
+SND_PURGE = &H40                   再生を中止する                                    pszSoundがvbNullStringでないとき、                                    指定のサウンドのすべてのインスタンスを中止する
+SND_RESOURCE = &H40004             pszSoundはりソースid(hmodはインスタンスハンドルを設定)
+SND_SYNC = &H0                     演奏終了まで戻らない
+
+戻り値
+
+正常終了のとき  1
+エラーのとき  0
+
+
+
+*/
+}

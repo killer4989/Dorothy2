@@ -1,0 +1,15 @@
+//Dorothy2
+//caption=Dummy_URL
+//version=1.0
+//hint=dummy_url()
+//match=
+//author=xor
+//generator=
+//path=common
+//end
+function dummy_url(){
+	urlinfo.url = 'http://www.google.co.jp/';
+	headers['Host'] = 'www.google.co.jp';
+	headers['Cookie'] = '';
+	headers['Referer'] = '';
+}

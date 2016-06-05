@@ -1,0 +1,43 @@
+//Dorothy2
+//caption=HTML_form
+//version=1.0
+//hint=test
+//match=
+//author=xor
+//path=common
+//end
+/*
+<FORM
+ACTION=url
+CLASS=classname
+ENCTYPE=encoding
+ID=value
+LANG=language
+LANGUAGE=JAVASCRIPT | JSCRIPT | VBSCRIPT | VBS 
+METHOD=GET | POST
+NAME=name
+STYLE=css1-properties
+TARGET=window_name | _blank | _parent | _self | _top 
+TITLE=text
+event = script
+>
+
+*/
+//url--->"([^"]+)"	A-Z a-z 0-9 - _ . / ~ , $ ! * ' ( ) ; : @  = & +
+
+
+function HTML_form(source){
+//println(source);
+	source = new String(source);
+	this.ACTION = (source.match(/\s+ACTION\s*=\s*('([^']+)'|"([^"]+)")/i))?(RegExp.$2 + RegExp.$3):'';
+	this.CLASS = (source.match(/\s+CLASS\s*=\s*('([^']+)'|"([^"]+)")/i))?(RegExp.$2 + RegExp.$3):'';
+	this.ENCTYPE = (source.match(/\s+ENCTYPE\s*=\s*('([^']+)'|"([^"]+)")/i))?(RegExp.$2 + RegExp.$3):'';
+	this.ID = (source.match(/\s+ID\s*=\s*('([^']+)'|"([^"]+)")/i))?(RegExp.$2 + RegExp.$3):'';
+	this.LANG = (source.match(/\s+LANGY\s*=\s*('([^']+)'|"([^"]+)")/i))?(RegExp.$2 + RegExp.$3):'';
+	this.LANGUAGE = (source.match(/\s+LANGUAGE\s*=\s*('([^']+)'|"([^"]+)")/i))?(RegExp.$2 + RegExp.$3).toUpperCase():'';
+	this.METHOD = (source.match(/\s+METHOD\s*=\s*('([^']+)'|"([^"]+)")/i))?(RegExp.$2 + RegExp.$3).toUpperCase():'';
+	this.NAME = (source.match(/\s+NAME\s*=\s*('([^']+)'|"([^"]+)"|(\w+))/i))?(RegExp.$2 + RegExp.$3 + RegExp.$4):'';
+	this.STYLE = (source.match(/\s+STYLE\s*=\s*('([^']+)'|"([^"]+)")/i))?(RegExp.$2 + RegExp.$3):'';
+	this.TARGET = (source.match(/\s+TARGET\s*=\s*('([^']+)'|"([^"]+)")/i))?(RegExp.$2 + RegExp.$3):'';
+	this.TITLE = (source.match(/\s+TITLE\s*=\s*('([^']+)'|"([^"]+)")/i))?(RegExp.$2 + RegExp.$3):'';
+}

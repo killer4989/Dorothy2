@@ -1,0 +1,51 @@
+//Dorothy2
+//caption=window
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=system\menu\set
+//end
+function(){
+	var frm = new VCLForm(true);
+
+	frm.loadFromFile(dorothy2_system_menu_set + 'window.dfm');
+
+	frm.ini = new Ini(dorothy2_system + 'setting.ini');
+
+	frm.CheckBox1.Checked = (frm.ini.read('window' , 'sizeflg' , '0') == '1');
+	if(!frm.CheckBox1.Checked){
+		frm.Edit1.Text = Width;
+		frm.Edit2.Text = Height;
+	}
+	else{
+		frm.Edit1.Text = frm.ini.read('window' , 'width' , '');
+		frm.Edit2.Text = frm.ini.read('window' , 'height' , '');
+	}
+
+	frm.CheckBox2.Checked = (frm.ini.read('window' , 'positionflg' , '0') == '1');
+	if(!frm.CheckBox2.Checked){
+		frm.Edit3.Text = Left;
+		frm.Edit4.Text = Top;
+	}
+	else{
+		frm.Edit3.Text = frm.ini.read('window' , 'left' , '');
+		frm.Edit4.Text = frm.ini.read('window' , 'top' , '');
+	}
+
+	frm.CancelBtn.onClick = function(){
+		frm.close();
+	};
+	frm.OKBtn.onClick = function(){
+		frm.ini.write('window' , 'sizeflg' , (frm.CheckBox1.Checked)? '1':'0');
+		frm.ini.write('window' , 'width' , frm.Edit1.Text);
+		frm.ini.write('window' , 'height' , frm.Edit2.Text);
+		frm.ini.write('window' , 'positionflg' , (frm.CheckBox2.Checked)? '1':'0');
+		frm.ini.write('window' , 'left' , frm.Edit3.Text);
+		frm.ini.write('window' , 'top' , frm.Edit4.Text);
+		frm.ini.update();
+	};
+	frm.showModal();
+	//eventLoop();
+
+}

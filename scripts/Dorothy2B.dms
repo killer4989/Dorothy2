@@ -1,0 +1,51 @@
+/*
+スクリプト初期化データ
+guid={45FB8B11-40ED-4E29-A4C9-A980B7522371}
+caption=動画ダウンロード２Ｂ
+version=0.1
+hint=
+event=OnDoneThread
+match=
+author=xor
+synchronize=0
+*/
+
+import xor.*;
+
+function OnDoneThread(success,filename,urlinfo,item,folderdata,optiondata){
+/*
+  ダウンロードスレッド終了イベント
+  ※synchronize=1 以外の場合にIrvine.Api/UrlManager/Folder/Itemを使用しないでください
+  ※ダイアログを呼びださないでください
+*/
+	if(!success){
+		return;
+	}
+	var newFileName = xoriniFilenameRead(item.url, optiondata);
+	if(newFileName == ''){							//新しいファイル名無し
+		return;
+	}
+	if(newFileName.match(/^remove$/)){					//DLファイルを削除
+		var ff = new File(filename);
+		ff.remove();
+		println('remove> ' + filename );
+		return;
+	}
+	if(item.filename != ''){						//別名がある場合
+		if(item.filename.indexOf('[[rename]]') == -1){			//別名に[[rename]]が含まれない
+			var idx = item.filename.lastIndexOf('.');
+			if(!(idx == -1 || idx == (item.filename.length - 1))){	//別名に拡張子が有る>何もしない
+				return;
+			}
+			var idx2 = newFileName.lastIndexOf('.');
+			if(idx2 == -1 || idx2 == (newFileName.length - 1)){	//新しいファイル名に拡張子が無い>何もしない
+				return;
+			}
+			var ext = newFileName.slice(idx2 , newFileName.length);
+			newFileName = item.filename + ext;			//別名に拡張子を追加
+		}
+	}
+	var f = rename(filename, changeFileName(newFileName));			//ファイル名書換え
+	println('rename> ' + f);
+	return true;
+}

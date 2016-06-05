@@ -1,0 +1,27 @@
+//Dorothy2
+//caption=long sleep
+//version=0.1
+//hint=l_sleep(time:ƒ~ƒŠ•b [,interval:•b])
+//match=
+//author=xor
+//path=common
+//priority=
+//end
+function l_sleep(time , interval){
+	var end_time = new Date().getTime() + time;
+	var now_time;
+	if(isUndefined(interval)){
+		interval = 30 * 1000;
+	}
+	else{
+		interval = interval * 1000;
+	}
+	while(end_time > (now_time = new Date().getTime()) ){
+		if( (end_time - now_time) > interval ){
+			sleep(interval);
+		}
+		else{
+			sleep(end_time - now_time);
+		}
+	}
+}

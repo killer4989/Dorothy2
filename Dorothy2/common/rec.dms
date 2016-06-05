@@ -1,0 +1,126 @@
+//Dorothy2
+//caption=rec
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=common
+//end
+function rec(buffer){
+	this.rec = new StringBuffer(buffer);
+	this.count = 0;
+	this.eof = false;
+	this.length = this.rec.length;
+	this.bitCount = 0;
+	this.bitBuffer = 0;
+	this.error = false;
+}
+,
+rec.prototype.xxget = function(){
+	if(this.length < (this.count + 1)){
+		this.eof = true;
+		return null;
+	}
+	var v =  this.rec.substring(this.count , this.count + 1).charCodeAt(0);
+	this.count++;
+	return v;
+}
+,rec.prototype.get = function(){
+	if(this.length < (this.count + 1)){
+		this.eof = true;
+		return null;
+	}
+	var v =  this.rec.substring(this.count , this.count + 1).charCodeAt(0);
+	this.count++;
+	this.bitBuffer = 0;
+	this.bitCount = 0;
+	return v;
+}
+,
+rec.prototype.getByte = function(){
+	if(this.length < (this.count + 1)){
+		this.eof = true;
+		return null;
+	}
+	var v = this.rec.charCodeAt(this.count);
+	this.count++;
+	this.bitBuffer = 0;
+	this.bitCount = 0;
+	return v;
+}
+,
+rec.prototype.getWord = function(){
+	if(this.length < (this.count + 2)){
+		this.eof = true;
+		return null;
+	}
+	var v =  this.rec.charCodeAt(this.count) + this.rec.charCodeAt(this.count + 1) * 256;
+	this.count += 2;
+	this.bitBuffer = 0;
+	this.bitCount = 0;
+	return v;
+}
+,
+rec.prototype.getDword = function(){
+	if(this.length < (this.count + 4)){
+		this.eof = true;
+		return null;
+	}
+	var v =  this.rec.charCodeAt(this.count) + this.rec.charCodeAt(this.count + 1) * 256 + this.rec.charCodeAt(this.count + 2) * 256 * 256 + this.rec.charCodeAt(this.count + 3) * 256 * 256 * 256;
+	this.count += 4;
+	this.bitBuffer = 0;
+	this.bitCount = 0;
+	return v;
+}
+,
+rec.prototype.getString = function(n){
+	if(this.length < (this.count + n)){
+		this.eof = true;
+		return null;
+	}
+	var v = this.rec.substring(this.count , this.count + n);
+	this.count += n;
+	this.bitBuffer = 0;
+	this.bitCount = 0;
+	return v;
+}
+,
+rec.prototype.getBit = function(n){
+	var b,b2,v;
+	b = this.bitBuffer;
+	while(this.bitCount < n){
+		//b = b << 8;
+		b = b * Math.pow(2,8);
+
+		b2 = this.xxget();
+		if(b2 == null){
+			this.error = true;
+			return null;
+		}
+		b += b2;
+		this.bitCount += 8;
+	}
+	this.bitCount  -= n;
+
+	//v = b >>> this.bitCount;
+	v = Math.floor(b / Math.pow(2,this.bitCount));
+
+	//b2 = v << this.bitCount;
+	b2 = v * Math.pow(2,this.bitCount);
+
+	//b  = b2 ^ b;
+	b = b - b2;
+
+	this.bitBuffer = b;
+	return v;
+}
+,
+rec.prototype.dump = function(s,n){
+	var i;
+	var list = [];
+	for(i = s; i < s+n; i++){
+		list.add(this.rec.charCodeAt(i).toString(16));
+	}
+	return list;
+}
+	

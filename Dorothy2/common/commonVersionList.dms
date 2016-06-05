@@ -1,0 +1,14 @@
+//Dorothy2
+//caption=common version list
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=common
+//end
+function commonVersionList(){
+	var i;
+	for(i in Dorothy.common){
+		println(Dorothy.common[i].caption + ' (' + Dorothy.common[i].version + ')');
+	}
+}

@@ -1,0 +1,14 @@
+//Dorothy2
+//caption=Dorothy version check
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=common
+//end
+function DorothyVersionCheck(version){
+	if(isUndefined(Dorothy.version)){
+		Dorothy.version = 0.1;
+	}
+	return parseFloat(Dorothy.version) >= parseFloat(version);
+}

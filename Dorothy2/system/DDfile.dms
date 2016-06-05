@@ -1,0 +1,29 @@
+//Dorothy2
+//caption=D&D file
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=system
+//end
+function(files){
+	var dir = new Directory(dorothy2_projectdata);
+	if(!dir.exists()){
+		dir.make();
+	}
+	//alert(files.length);
+	var i , f;
+	for(i in files){
+		f = new File(files[i]);
+		if(f.extractExt() == '.zip'){
+			if(new File(dorothy2_projectdata + f.extractName()).exists()){
+				if(confirm(f.extractName() + 'ÇÕä˘Ç…óLÇËÇ‹Ç∑ÅAè„èëÇ´ÇµÇ‹Ç∑Ç©ÅH')){
+					f.copyTo(dorothy2_projectdata + f.extractName());
+				}
+			}
+			else{
+				f.copyTo(dorothy2_projectdata + f.extractName());
+			}
+		}
+	}
+}

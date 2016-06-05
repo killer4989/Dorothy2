@@ -1,0 +1,61 @@
+//Dorothy2
+//caption=commentCut
+//version=1.0
+//hint=dmonkey のコメントカット
+//match=
+//author=xor
+//path=common
+//end
+function commentCut(source){
+	var out = '';
+	var i , j;
+	for(i = 0 ; i < source.length ; i++){
+		if(source[i] == '/'){
+			if(source[i + 1] == '/'){
+				j = i + 2;
+				while(source[j] != "\r"){
+					j++;
+				}
+				if(source[j + 1] == "\f"){
+					j++;
+				}
+				i = j;
+			}
+			else if(source[i + 1] == '*'){
+				j = i + 2;
+				while((source[j] + source[j + 1]) != '*/'){
+					j++;
+				}
+				i = j + 1;
+			}
+			else{
+				out += source[i];
+			}
+		}
+		else if(source[i] == "'"){
+			out += source[i];
+			j = i + 1;
+			while(source[j] != "'"){
+				out += source[j++];
+			}
+			out += source[j++];
+			i = j;
+		}
+		else if(source[i] == '"'){
+			out += source[i];
+			j = i + 1;
+			while(source[j] != '"'){
+				if(source[j] + source[j + 1] == '\"'){
+					out += source[j++];
+				}
+				out += source[j++];
+			}
+			out += source[j++];
+			i = j;
+		}
+		else{
+			out += source[i];
+		}
+	}
+	return out;
+}

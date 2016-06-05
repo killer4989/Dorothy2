@@ -1,0 +1,15 @@
+//Dorothy2
+//caption=編集
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=system\menu\project
+//end
+function(){
+	var file1 = Dialog.openFile('プロジェクトファイル編集',dorothy2_project + '*.*');
+	if(file1 == null){
+		return;
+	}
+	editor(file1);
+}

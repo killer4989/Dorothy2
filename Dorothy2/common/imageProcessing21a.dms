@@ -1,0 +1,677 @@
+//Dorothy2
+//caption=imageProcessing21a
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=common
+//end
+
+function IMG(image){
+	return new StringBuffer(image);
+}
+,
+function DIB(){
+	return new Struct(
+		'size:l',
+		'height:l',
+		'width:l',
+		'image:s'
+	);
+}
+,
+function RAW(){
+	return new Struct(
+		'height:l',
+		'width:l',
+		'image:s'
+	);
+}
+,
+function BIN(){
+	return  new Struct(
+		'symbol:c',
+		'class0:c',
+		'class1:c',
+		'class2:c',
+		'height:l',
+		'width:l',
+		'max_score:l',
+		'id:l',
+		'image:s'
+	);
+}
+,
+function TXT(){
+	return  new Struct(
+		'symbol:c',
+		'class0:c',
+		'class1:c',
+		'class2:c',
+		'height:l',
+		'width:l',
+		'image:s',
+		'size:l'
+	);
+}
+
+,
+function RGBA(){
+	return new Struct(
+		'R:c',
+		'G:c',
+		'B:c',
+		'A:c'
+	);
+}
+,
+function range(){
+	return new Struct(
+		'start:l',
+		'end:l'
+	);
+}
+,
+function PARA(){
+	return new Struct(
+		'operation:l',
+		'Rs:l',
+		'Re:l',
+		'Gs:l',
+		'Ge:l',
+		'Bs:l',
+		'Be:l',
+		'As:l',
+		'Ae:l',
+		'set:l'
+	);
+}
+,
+AND = 1,
+OR  = 2,
+XOR = 3,
+SET = 4,
+
+
+function scoreboard(){
+	return new Struct(
+		'height:l',
+		'width:l',
+		'board:s'
+	);
+}
+,
+
+function score_item(){
+	return new Struct(
+		'score:f',
+		'symbol:c',
+		'class0:c',
+		'class1:c',
+		'class2:c',
+		'id:l',
+		'y:l',
+		'x:l'
+	);
+}
+,
+
+function score_rank(){
+	return new Struct(
+		'n:l',
+		'rank:s'
+	);
+}
+
+,
+function rect(){
+	return new Struct(
+		'y:l',
+		'x:l',
+		'height:l',
+		'width:l'
+	);
+}
+,
+
+
+function template_list(){
+	return new Struct(
+		'n:l',
+		'list:s'
+	);
+}
+,
+
+function label_item(){
+	return new Struct(
+		'id:l',
+		'y:l',
+		'x:l',
+		'height:l',
+		'width:l',
+		'n:l'
+	);
+}
+,
+
+function labels(){
+	return new Struct(
+		'n:l',
+		'item:s'
+	);
+}
+,
+
+/////// BITMAP ///////////////////////////////////////
+
+function BITMAPFILEHEADER(){
+	return new Struct(
+		'bfType:t',
+		'bfSize:u',
+		'bfReserved1:t',
+		'bfReserved2:t',
+		'bfOffBits:u',
+//	);
+//}
+//,
+
+//function BITMAPINFOHEADER(){
+//	return new Struct(
+		'biSize:u',
+		'biWidth:l',
+		'biHeight:l',
+		'biPlanes:t',
+		'biBitCount:t',
+		'biCompression:u',
+		'biSizeImage:u',
+		'biXPixPerMeter:l',
+		'biYPixPerMeter:l',
+		'biClrUsed:u',
+		'biClrImporant:u'
+	);
+}
+,
+
+
+
+
+function alloca(size){
+	return new StringBuffer(size);
+}
+,
+(function(){
+	var dll_path = Dorothy.path + 'bin\imageProcessing21.dll';
+	//var dll_path = 'C:\vs6\imageProcessing21\Release\imageProcessing21.dll';
+	imageProcessing21 = new DynaCall;
+	imageProcessing21.register(dll_path,'version'	,'f=s'		,'r=l');
+
+
+	if(0x02010101 > imageProcessing21.version()){
+		println('imageProcessing21.dllÇ™å√Ç¢ÇÒÇæÇ∫ÅH');
+		exit();
+	}
+
+
+	imageProcessing21.register(dll_path,'DIB2RAW'		,'f=s','i=ss'	,'r=l');
+	imageProcessing21.register(dll_path,'RAW2BIN'		,'f=s','i=sss'	,'r=l');
+	imageProcessing21.register(dll_path,'BIN2TXT'		,'f=s','i=ss'	,'r=l');
+	imageProcessing21.register(dll_path,'BIN2TXT2'		,'f=s','i=ss'	,'r=l');
+	imageProcessing21.register(dll_path,'BIN_trim'		,'f=s','i=s'	,'r=l');
+	imageProcessing21.register(dll_path,'BIN_cut'		,'f=s','i=sss'	,'r=l');
+	imageProcessing21.register(dll_path,'TXT2BIN'		,'f=s','i=ss'	,'r=l');
+	imageProcessing21.register(dll_path,'BIN2RAW'		,'f=s','i=ss'	,'r=l');
+	imageProcessing21.register(dll_path,'RAW2DIB'		,'f=s','i=ss'	,'r=l');
+	imageProcessing21.register(dll_path,'BMPmake'		,'f=s','i=sss'	,'r=l');
+	imageProcessing21.register(dll_path,'template_match'	,'f=4','i=ssll'	,'r=f');
+	imageProcessing21.register(dll_path,'template_match2'	,'f=s','i=ssss'	,'r=l');
+	imageProcessing21.register(dll_path,'template_match3'	,'f=s','i=ssss'	,'r=l');
+	imageProcessing21.register(dll_path,'template_match20'	,'f=4','i=ssll'	,'r=f');
+	imageProcessing21.register(dll_path,'template_match22'	,'f=s','i=ssss'	,'r=l');
+	imageProcessing21.register(dll_path,'template_match23'	,'f=s','i=ssss'	,'r=l');
+	imageProcessing21.register(dll_path,'scoreboard_ini'	,'f=s','i=sf'	,'r=l');
+	imageProcessing21.register(dll_path,'scoreboard_get'	,'f=s','i=ss'	,'r=l');
+	imageProcessing21.register(dll_path,'score_ranking'	,'f=s','i=ss'	,'r=l');
+	imageProcessing21.register(dll_path,'score_rank_get'	,'f=s','i=ssl'	,'r=l');
+	imageProcessing21.register(dll_path,'sbyc'		,'f=s','i=s'	,'r=l');
+	imageProcessing21.register(dll_path,'sbgb'		,'f=s','i=sl'	,'r=l');
+	imageProcessing21.register(dll_path,'template_list_add'	,'f=s','i=ssl'	,'r=l');
+	imageProcessing21.register(dll_path,'labeling'		,'f=s','i=s'	,'r=l');
+	imageProcessing21.register(dll_path,'label_list'	,'f=s','i=ss'	,'r=l');
+	imageProcessing21.register(dll_path,'label_list_item'	,'f=s','i=ssl'	,'r=l');
+	imageProcessing21.register(dll_path,'label_cut'		,'f=s','i=sss'	,'r=l');
+
+
+}())
+,
+
+function IMG2DIB(img){
+	
+	common_load('imgctl');
+	var g = new imgctl();
+	var gdata = new StringBuffer(img);
+	g.MtoDIB(gdata);
+	g.HeadDIB();
+	g.GetDIB();
+
+	if(g.bmih.biBitCount != 24){
+		var ret = g.DIBto24Bit();
+		if(ret == false){
+			g.DeleteDIB();
+			println('imgctl error');
+			return false;
+		}
+		g.HeadDIB();
+		g.GetDIB();
+	}
+
+	var dib = DIB();
+	dib.width = parseInt(g.bmih.biWidth);
+	dib.height = g.bmih.biHeight;
+	dib.buffer = new StringBuffer(g.pvData);
+	dib.image = dib.buffer;
+
+
+	g.DeleteDIB();
+
+	return dib;
+}
+,
+function DIB2RAW(dib){
+	var raw = RAW();
+	var l = dib.width * dib.height * 4;
+	raw.buffer = new StringBuffer(l);
+	raw.image =  raw.buffer;
+	imageProcessing21.DIB2RAW(dib, raw);
+	return raw;
+}
+,
+function IMG2RAW(img){
+	return DIB2RAW(IMG2DIB(img));
+}
+,
+
+function RAWgray(raw){
+	var raw2 = RAW();
+	raw2.width = raw.width;
+	raw2.height = raw.height;
+	var l = raw.width * raw.height * 4;
+	raw2.buffer = new StringBuffer(l,20);
+	raw2.image =  raw2.buffer;
+	var y,x,w,z,t;
+	for(y=0;y<raw.height;y++){
+		w=y*raw.width*4;
+		for(x=0;x<raw.width;x++){
+			z=x*4+w;
+			t=Math.floor((raw.buffer[z].charCodeAt(0)+raw.buffer[z+1].charCodeAt(0)+raw.buffer[z+2].charCodeAt(0))/3);
+			raw2.buffer[z]=raw2.buffer[z+1]=raw2.buffer[z+2]=t.toChar();
+		}
+	}
+	raw2.image = raw2.buffer;
+	return raw2;
+}
+,
+
+
+function RAW2BIN1st(raw, para){
+	var bin = BIN();
+	var l = raw.width * raw.height * 4;
+	bin.buffer = new StringBuffer(l,0);
+	bin.image =  bin.buffer;
+	imageProcessing21.RAW2BIN(raw, bin, para);
+	bin.symbol = '';
+	bin.class0 = '';
+	bin.class1 = '';
+	bin,class2 = '';
+	return bin;
+}
+,
+function RAW2BIN(raw, bin, para){
+	imageProcessing21.RAW2BIN(raw, bin, para);
+}
+,
+function RAW2BINsc(raw,bin, func){
+	var y,x,w,z;
+	var R,G,B;
+	for(y=0;y<raw.height;y++){
+		w=y*raw.width*4;
+		for(x=0;x<raw.width;x++){
+			z=x*4+w;
+			R=raw.buffer[z].charCodeAt(0);
+			G=raw.buffer[z+1].charCodeAt(0);
+			B=raw.buffer[z+2].charCodeAt(0);
+			bin.buffer[z]=func(R,G,B).toChar();
+		}
+	}
+	bin.image = bin.buffer;
+}
+,
+
+function BIN2TXT(bin){
+	var txt = TXT();
+	var l = (bin.width + 2) * bin.height ;
+	txt.buffer = new StringBuffer(l);
+	txt.image =  txt.buffer;
+	imageProcessing21.BIN2TXT(bin, txt);
+	return txt;
+}
+,
+function BIN2TXT2(bin){
+	var txt = TXT();
+	var l = (bin.width + 2) * bin.height ;
+	txt.buffer = new StringBuffer(l);
+	txt.image =  txt.buffer;
+	imageProcessing21.BIN2TXT2(bin, txt);
+	return txt;
+}
+,
+
+function BIN_trim(bin){
+	imageProcessing21.BIN_trim(bin);
+}
+,
+
+function BIN_cut(bin1, r){
+	var bin2 = BIN();
+	var l = r.width * r.height * 4;
+	bin2.buffer = new StringBuffer(l,0);
+	bin2.image = bin2.buffer;
+	imageProcessing21.BIN_cut(bin1, bin2, r);
+	return bin2;
+}
+,
+
+function TXT2BIN(txt){
+	var bin = BIN();
+	var l = txt.width * txt.height * 4;
+	bin.buffer = new StringBuffer(l);
+	bin.image = bin.buffer;
+	imageProcessing21.TXT2BIN(txt,bin);
+	return bin;
+}
+,
+
+function BIN2RAW(bin){
+	var raw = RAW();
+	var l = bin.width * bin.height * 4;
+	raw.buffer = new StringBuffer(l);
+	raw.image = raw.buffer;
+	imageProcessing21.BIN2RAW(bin, raw);
+	return raw;
+}
+,
+
+function RAW2DIB(raw, dib){
+	var dib = DIB();
+	var l = raw.height * (raw.width * 3 + ((raw.width * 3 )% 4 ));
+	dib.buffer = new StringBuffer(l);
+	dib.image = dib.buffer;
+	imageProcessing21.RAW2DIB(raw, dib);
+	return dib;
+}
+,
+
+function DIB2BMP(dib){
+	var head = BITMAPFILEHEADER();
+	//var info = BITMAPINFOHEADER();
+
+	head.bfType      = 'B'.charCodeAt(0) + 'M'.charCodeAt(0) * 256;
+	head.bfSize      = 14 + 40 + dib.buffer.length + 2;
+	head.bfReserved1 = 0;
+	head.bfReserved2 = 0;
+	head.bfOffBits   = 14 + 40 + 2;//Ç»ÇÒÇ©Ç∏ÇÍÇÈÅHç\ë¢ëÃÇ™ÇSÇÃî{êîÇæÇ∆ëÂè‰ïvÇ»ÇÒÇæÇØÇ«ÅH
+
+	head.biSize         = 40;
+	head.biWidth        = dib.width;
+	head.biHeight       = dib.height;
+	head.biPlanes       = 1;
+	head.biBitCount     = 24; //å≈íË
+	head.biCopmression  = 0; //ñ≥à≥èk
+	head.biSizeImage    = dib.buffer.length;
+	head.biXPixPerMeter = 0;
+	head.biYPixPerMeter = 0;
+	head.biClrUsed      = 0;
+	head.biCirImportant = 0;
+
+	dib.size = dib.buffer.length;
+
+	var bmp = new StringBuffer(head.bfSize);
+
+	imageProcessing21.BMPmake(bmp,dib,head);//,info);//åqÇ∞ÇƒÇPÇ¬Ç…Ç∑ÇÈ
+	return bmp;
+}
+,
+function RAW2BMP(raw){
+	return DIB2BMP(RAW2DIB(raw));
+}
+,
+function BIN2BMP(bin){
+	return RAW2BMP(BIN2RAW(bin));
+}
+,
+
+
+
+/////////////////////////////template/////////////////////////////////////////
+
+function template_list_new(templ){
+	var tl = template_list();
+	tl.n = templ.length;
+	var l = tl.n * 4;
+	tl.buffer = new StringBuffer(l,0);
+	tl.list = tl.buffer;
+	for(var i in templ){
+		imageProcessing21.template_list_add(tl, templ[i], i);
+	}
+	return tl;
+}
+,
+
+
+function template_match(source , templ , y, x){
+	return imageProcessing21.template_match(source, templ, y, x);
+}
+,
+function template_match2(source , templ , r , sb){
+	return imageProcessing21.template_match2(source, templ, r , sb);
+}
+,
+
+function template_match3(source, tl, r, sb){
+	return imageProcessing21.template_match3(source, tl, r , sb);
+}
+,
+
+function template_match20(source , templ , y, x){
+	return imageProcessing21.template_match20(source, templ, y, x);
+}
+,
+function template_match22(source , templ , r , sb){
+	return imageProcessing21.template_match22(source, templ, r , sb);
+}
+,
+
+function template_match23(source, tl, r, sb){
+	return imageProcessing21.template_match23(source, tl, r , sb);
+}
+,
+
+////////////////////scoreboard/////////////////////////////////////////
+
+function scoreboard_new(source){
+	var sb = scoreboard();
+	sb.height = source.height;
+	sb.width  = source.width;
+	var l = source.height * source.width * 20;
+	sb.buffer = new StringBuffer(l,0);
+	sb.board = sb.buffer;
+	//scoreboard_ini(sb,0.9);
+	return sb;
+}
+,
+
+function scoreboard_ini(sb ,f){
+	return imageProcessing21.scoreboard_ini(sb ,f);
+}
+,
+function scoreboard_get(sb ,si){
+	return imageProcessing21.scoreboard_get(sb ,si);
+}
+,
+function score_ranking(sb ,n){
+	var sr = score_rank();
+	sr.n = n;
+	var l = n * 20;
+	sr.buffer = new StringBuffer(l);
+	sr.rank = sr.buffer;
+	imageProcessing21.score_ranking(sb ,sr);
+	return sr;
+}
+,
+function score_rank_get(sr,si,n){
+	imageProcessing21.score_rank_get(sr,si,n);
+}
+,
+function score_rank_position_sort(sr,n){
+	var r = [];
+	var si = score_item();
+	for(var i=0; i<n; i++){
+		score_rank_get(sr,si,i);
+		r.add([si.symbol.toChar().toUpperCase(),si.x]);
+	}
+	r.sort(function(a,b){
+			if(a[1]>b[1]) return true;
+			return false;
+		});
+	return r;
+}
+,
+function scoreboard_y_compression(sb){
+	imageProcessing21.sbyc(sb);
+}
+,
+function socreboard_ghost_buster(sb,n){
+	imageProcessing21.sbgb(sb,n);
+}
+
+////////////// labeling /////////////////////////
+,
+function labeling(bin){
+	return imageProcessing21.labeling(bin);
+}
+,
+
+function label_list_new(n){
+	var ll = labels();
+	ll.n = n;
+	ll.buffer = new StringBuffer((1+n)*24,0);
+	ll.item = ll.buffer;
+	return ll;
+}
+,
+
+function label_list(bin, ll){
+	return imageProcessing21.label_list(bin, ll);
+}
+,
+
+function label_list_item(ll, item, n){
+	return imageProcessing21.label_list_item(ll,item,n);
+}
+,
+
+function label_list_sort(ll){
+}
+,
+
+function label_cut(bin1, item){
+	var bin2 = BIN();
+	var l = item.width * item.height * 4;
+	bin2.buffer = new StringBuffer(l,0);
+	bin2.image = bin2.buffer;
+	imageProcessing21.label_cut(bin1, bin2, item);
+	return bin2;
+}
+,
+
+////////////////////ñcí£§é˚èk///////////////////////////////////////
+
+
+function _Dilate(bin){
+	var bin2 = BIN();
+	var l = bin.width*bin.height*4;
+	bin2.buffer=new StringBuffer(l,0);
+	bin2.image=bin2.buffer;
+	var y,x,w,z;
+	var c=0;
+	for(y=1;y<(bin.height-1);y++){
+		w=y*bin.width*4;
+		for(x=1;x<(bin.width-1);x++){
+			z=x*4+w;
+			if(bin.buffer[z-4].charCodeAt(0)!=0
+			|| bin.buffer[z  ].charCodeAt(0)!=0
+			|| bin.buffer[z+4].charCodeAt(0)!=0
+			|| bin.buffer[z-4-bin.width*4].charCodeAt(0)!=0
+			|| bin.buffer[z  -bin.width*4].charCodeAt(0)!=0
+			|| bin.buffer[z+4-bin.width*4].charCodeAt(0)!=0
+			|| bin.buffer[z-4+bin.width*4].charCodeAt(0)!=0
+			|| bin.buffer[z  +bin.width*4].charCodeAt(0)!=0
+			|| bin.buffer[z+4+bin.width*4].charCodeAt(0)!=0
+			){
+				bin2.buffer[z]=1.toChar();
+				c++;
+			}
+		}
+	}
+	bin2.height=bin.height;
+	bin2.width=bin.width;
+	bin2.image=bin2.buffer;
+	bin2.max_scoer=c;
+	return bin2;
+}
+,
+
+function Dilate(bin,n){
+	for(var i=0;i<n;i++){
+		bin = _Dilate(bin);
+	}
+	return bin;
+}
+,
+
+function Erode(bin){
+	var bin2 = BIN();
+	var l = bin.width*bin.height*4;
+	bin2.buffer=new StringBuffer(l,0);
+	bin2.image=bin2.buffer;
+	var y,x,w,z;
+	var c=0;
+	for(y=1;y<(bin.height-1);y++){
+		w=y*bin.width*4;
+		for(x=1;x<(bin.width-1);x++){
+			z=x*4+w;
+			if(bin.buffer[z-4].charCodeAt(0)==0
+			|| bin.buffer[z  ].charCodeAt(0)==0
+			|| bin.buffer[z+4].charCodeAt(0)==0
+			|| bin.buffer[z-4-bin.width*4].charCodeAt(0)==0
+			|| bin.buffer[z  -bin.width*4].charCodeAt(0)==0
+			|| bin.buffer[z+4-bin.width*4].charCodeAt(0)==0
+			|| bin.buffer[z-4+bin.width*4].charCodeAt(0)==0
+			|| bin.buffer[z  +bin.width*4].charCodeAt(0)==0
+			|| bin.buffer[z+4+bin.width*4].charCodeAt(0)==0
+			){
+				bin2.buffer[z]=0.toChar();
+			}
+			else{
+				bin2.buffer[z]=1.toChar();
+				c++;
+			}
+		}
+	}
+	bin2.height=bin.height;
+	bin2.width=bin.width;
+	bin2.image=bin2.buffer;
+	bin2.max_scoer=c;
+	return bin2;
+}
+	

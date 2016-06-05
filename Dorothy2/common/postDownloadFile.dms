@@ -1,0 +1,74 @@
+//Dorothy2
+//caption=postDownloadFile
+//version=0.11
+//hint=post‚Å‚c‚k‚·‚éê‡Žg—p
+//match=
+//author=xor
+//path=common
+//priority=500
+//end
+function postDownloadFile(http , postUrl , postData , fileName){
+	//-----------------------
+	//return 
+	// ok ---> http
+	// ng ---> false
+	//-----------------------
+	common_load('saveFolder');
+	//•Û‘¶æ
+	tmp = saveFolder() + '\' + fileName;
+
+	var file = new File(tmp);
+	if(file.exists()){
+		file.remove();
+	}
+	var dir = new Directory(file.extractPath());
+	if(!dir.exists()){
+		dir.make();
+	}
+	println('save filename--->'  + file.filename);
+	try{
+		file.open('w');
+		//var http = new HTTP();
+		http.proxy = urlinfo.proxy;
+		http.request('POST' , postUrl , postData);
+		http.response();
+		if(http.responseHeader.code == 200){
+			var size = parseInt(http.responseHeader['content-length']);
+			println('file size--->' + size);
+			var wsize = 1024 * 1024;
+			var ssize = 0;
+			var min = new Date().getMinutes();
+			while(true){
+				if((size - ssize) > wsize){
+					s = http.read(wsize);
+					file.write(s);
+					ssize += wsize;
+					if(min != new Date().getMinutes()){
+						println(ssize + '/' + size + ' (' + (ssize / size * 100).toFixed(1) + '%)');
+						min = new Date().getMinutes();
+					}
+				}
+				else{
+					s = http.read(size - ssize);
+					file.write(s);
+					ssize += (size - ssize);
+					println(ssize + '/' + size + ' (' + (ssize / size * 100).toFixed(1) + '%)');
+					break;
+				}
+			}
+			file.close();
+			http.close();
+			println('download comp.');
+		}
+		else{
+			throw('code = ' + http.responseHeader.code);
+		}
+	}
+	catch(e){
+		println('error--->' + e);
+		file.close();
+		http.close();
+		return false;
+	}
+	return http;
+}

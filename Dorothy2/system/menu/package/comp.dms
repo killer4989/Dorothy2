@@ -1,0 +1,47 @@
+//Dorothy2
+//caption=プロジェクトを圧縮
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=system\menu\package
+//end
+function(){
+	if(COMPRESSION == ''){
+		alert('圧縮コマンドが未設定です');
+		return;
+	}
+	var frm = new VCLForm(true);
+
+	frm.loadFromFile(dorothy2_system_menu_set + 'dirlist.dfm');
+
+	var dir = new Directory(dorothy2_projectdata);
+	if(!dir.exists()){
+		alert('フォルダが無い');
+		return;
+	}
+	var dirName = dir.findFirstDir('dorothy2*');
+	while(dirName != null){
+
+		var a = frm.TreeView1.Items.add(null,dirName);
+		dirName = dir.findNextDir();
+	}
+
+	frm.CancelBtn.onClick = function(){
+		frm.close();
+	};
+	frm.OKBtn.onClick = function(){
+		if(frm.TreeView1.Selected == null){
+			return;
+		}
+		var fname = frm.TreeView1.Selected.Text;
+		var ccmd = format(COMPRESSION , dorothy2_projectdata + fname + '.zip' , dorothy2_projectdata + fname + '\');
+		
+		var ret = Win32.winExec(ccmd);
+		//Win32.shellExecute('open' , '"' + editor_name + '"' ,  '"' + path + '"');
+		//frm.ini.write('arc' , 'compression' , frm.Edit1.Text);
+		//frm.ini.write('arc' , 'expansion' , frm.Edit2.Text);
+		//frm.ini.update();
+	};
+	frm.showModal();
+}

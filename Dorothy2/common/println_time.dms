@@ -1,0 +1,13 @@
+//Dorothy2
+//caption=println time
+//version=1.0
+//hint=println ‚ÉŠÔ‚ğ•t‚¯‚Äo—Í
+//match=
+//author=xor
+//path=common
+//end
+println = function(){
+	var t = new Date();
+	t.format = 'hh:nn:ss';
+	writeln(t + '"' + format('%.3d' , t.getMilliseconds()) + ' ' + arguments);
+}

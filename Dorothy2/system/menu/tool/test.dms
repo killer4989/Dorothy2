@@ -1,0 +1,13 @@
+//Dorothy2
+//caption=Dorothy2A.dms‚ðŠJ‚­
+//version=1.0
+//hint=test
+//match=
+//author=xor
+//generator=
+//path=tool
+//end
+function(){
+	var path = irvine_script_path + 'Dorothy2A.dms';
+	editor(path);
+}

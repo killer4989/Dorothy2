@@ -1,0 +1,76 @@
+//Dorothy2
+//caption=swfformat
+//version=1.0
+//hint=swf format
+//match=
+//author=xor
+//generator=
+//path=common
+//end
+function swfformat(swf){
+	common_load('StringBufferExtension','rec');
+
+
+
+
+	var rect = function(c){
+		var rectw = {};
+		rectw.size      = c.getBit(5) +1;
+		rectw.Xmin      = c.getBit(rectw.size);
+		rectw.Xmax      = c.getBit(rectw.size);
+		rectw.Ymin      = c.getBit(rectw.size);
+		rectw.Ymax      = c.getBit(rectw.size);
+		return rectw;
+	};
+
+
+
+	var tag = function(c){
+		var tagw = {};
+		var v = c.getWord();
+		tagw.id = v >> 6;
+		tagw.dataSize = v & 0x3f;
+
+		if(tagw.dataSize == 63){
+			tagw.dataRealSize = c.getDword();
+		}
+		else{
+			tagw.dataRealSize = tagw.dataSize;
+		}
+		return tagw;
+	};
+
+
+		
+
+
+	var s = new rec(swf);
+	println(s.dump(0,20));
+	var magic = s.getString(3);
+	var version = s.getByte();
+	var file_length = s.getDword();
+	var frame_size = rect(s);
+	var frame_rate = s.getWord();
+	var frame_count = s.getWord();
+
+	println('magic= ' + magic);
+	println('version=' + version);
+	println('file_length= ' + file_length);
+	println('frame size= ' + frame_size.size);
+	println('frame Xmin= ' + frame_size.Xmin);
+	println('frame Xmax= ' + frame_size.Xmax);
+	println('frame Ymin= ' + frame_size.Ymin);
+	println('frame Ymax= ' + frame_size.Ymax);
+	println('frame rete= ' + frame_rate);
+	println('frame count= ' + frame_count);
+
+
+	var tag1 = tag(s);
+
+	println('tag id= ' + tag1.id);
+	println('tag data size= ' + tag1.dataSize);
+	println('tag data real size=' + tag1.dataRealSize);
+
+
+	return;
+}

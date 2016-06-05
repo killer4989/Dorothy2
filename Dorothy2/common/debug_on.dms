@@ -1,0 +1,57 @@
+//Dorothy2
+//caption=debug_on
+//version=1.0
+//hint=デバッグ用
+//match=
+//author=xor
+//generator=
+//path=common
+//end
+function debug_on(){
+	debug_info = function(){
+		println('debug mode start!!!');
+	};
+
+	debug_msg = function(){
+		var i;
+		for(i = 0 ; i < arguments.length ; i++){
+			println('debug>' + arguments[i]);
+		}
+	};
+
+	debug_object = function(){
+		var i;
+		for(i = 0 ; i < arguments.length ; i++){
+			var v =  arguments[i];
+			println(v);
+			var j;
+			for(j in v){
+				try{
+					println(j + '--->' + v[j]);
+				}
+				catch(e){
+					println(j + '===>' + e);
+				}
+			}
+		}
+	};
+
+	debug_view = function(str){
+		var data_name = 'temp.txt';
+		var editor_name = optiondata.Editor;
+		if(editor_name == ''){
+			editor_name = 'notepad.exe';
+		}
+		var s = new Strings();
+		s.assign(str);
+		var path = Dorothy.temp;
+		var d =  new Directory(path);
+		if(! d.exists()){
+			d.make();
+		}
+		s.saveToFile(path + data_name);
+		//run
+		Win32.shellExecute('open' , '"' + editor_name + '"' ,  '"' + path + data_name + '"');
+		return;
+	};
+}

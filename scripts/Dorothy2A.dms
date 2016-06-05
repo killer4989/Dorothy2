@@ -1,0 +1,345 @@
+/*
+スクリプト初期化データ
+guid={DCE1A8A9-D753-471E-8F87-4EEA91E12596}
+caption=動画ダウンロード２Ａ
+version=0.19
+hint=動画ダウンロード２Ａ
+event=OnHttpRequest
+match=
+author=xor
+synchronize=0
+*/
+//{68CA0FCF-C14E-45BC-B130-A8C8D94CE189}
+debug = true;
+Dorothy = new Object;
+Dorothy.matchList = [ ["http://www.crunchyroll.com/media-",'crunchyroll'],["http://www.crunchyroll.com/(series-|showseriesmedia\\?id=)",'crunchyroll_series'],["http://www.dailymotion.com/",'dailymotion'],["http://(www\\.)?filefactory.com/(file/[^/]+/?|info/premium.php/(t|w)/)",'filefactory'],["http://www.hotgoo.com/watch/.*",'hotgoo'],["http://www.mediafire.com/(\\?|download.php\\?|file/)",'mediafire'],["http://(www.)?megaupload.com/([^/]+/)?\\?d|http://(www.)?megarotic.com/([^/]+/)?\\?d|http://(www.)?sexuploader.com/([^/]+/)?\\?d",'megaupload'],["http://nantokadoga.com/.*.php\\?mid=",'nantokadoga'],["http://www.nicovideo.jp/watch/.*|http://.*\\.nicovideo\\.jp/smile\\?v=",'nicovideo'],["http://(www\\.)?rapidshare.com/files/",'rapidshare'],["http://www.veoh.com/(videos?/|videoDetails\\.html\\?v=|.*permalinkId=)",'veoh'],["http://[a-z0-9]+.xtube.com/(watch_video|play_re)\\.php\\?.*v=[A-Za-z0-9-]+",'XTube'],["youtube.*v=[^&]{11}|youtube.*/v/[^&]{11}",'youtube']];
+Dorothy.programDir = 'C:\Program Files\Irvine\Dorothy2\program\';
+Dorothy.path = 'C:\Program Files\Irvine\Dorothy2\';
+Dorothy.temp = 'C:\Program Files\Irvine\Dorothy2\temp\';
+Dorothy.version = '0.19';
+//{1484567B-B377-4865-BDF3-4219DD113590}
+
+Dorothy.common = new Object;
+
+function file_load(path){
+	var mutex = new Mutex('file_load');
+	mutex.lock();
+	var path2 = Dorothy.path + path;
+	var file = new File(path2);
+	var flg = false;
+	var count = 5;
+	do{
+		flg = false;
+		try{
+			file.open('r');
+			var data = file.read();
+		}
+		catch(e){
+			println('error>' + e + ' ' + path + ' の呼出に失敗しました。');
+			flg = true;
+			count--;
+			sleep(100);
+		}
+		finally{
+			file.close();
+		}
+	}
+	while(flg && count != 0);
+	mutex.unlock();
+	if(flg){
+		exit();
+	}
+	return data;
+}
+function print_debug(str){
+	if(debug){
+		println(str);
+	}
+}
+
+
+function OnHttpRequest(urlinfo,headers,item,folderdata,optiondata){
+/*
+  HTTP(S)リクエストイベント
+  ※synchronize=1 以外の場合にIrvine.Api/UrlManager/Folder/Itemを使用しないでください
+  ※ダイアログを呼びださないでください
+*/
+	function common_xload(name){
+		var s = file_load('common\' + name + '.dms');
+		Dorothy.common[name] = new Object;
+		if(!s.match(/^\/\/version=(.*?)$/m)){
+			println(name + '.dms version が記載されていません');
+			exit();
+		}
+		Dorothy.common[name].version =  RegExp.$1;
+
+		if(!s.match(/^\/\/caption=(.*?)$/m)){
+			println(name + '.dms caption が記載されていません');
+			exit();
+		}
+		Dorothy.common[name].caption =  RegExp.$1;
+
+		eval(s);
+	}
+
+	function common_load(){
+		var i;
+		for(i = 0 ; i < arguments.length ; i++){
+			if(Dorothy.common.hasKey(arguments[i])){
+				continue;
+			}
+			common_xload(arguments[i]);
+		}
+	}
+
+	function common_reload(){
+		var i;
+		for(i = 0 ; i < arguments.length ; i++){
+			common_xload(arguments[i]);
+		}
+	}
+
+	function program_load(name){
+		return file_load('program\' + name + '.dms');
+	}
+
+	function user_load(name){
+		return file_load('user\' + Dorothy.matchFile + '\' + name);
+	}
+
+	function user_program_load(){
+		var i;
+		for(i = 0 ; i < arguments.length ; i++){
+			eval( file_load('user\' + Dorothy.matchFile + '\' + arguments[i] + '.dms') );
+		}
+	}
+
+	function retry(){
+		var i;
+		for(i = 0 ; i < arguments.length ; i++){
+			println(arguments[i]);
+		}
+		urlinfo.url = '';
+		urlinfo.proxy = '';
+		return false;
+	}
+
+	function DorothyFileSavePath(){
+		//full path が判別できたら、path を返す
+		//出来なかったら、'' を返す
+		var fpath = folderdata.Folder;
+		var FolderFullPathFlag = true;
+		if(fpath.length < 2){
+			FolderFullPathFlag = false;
+		}
+		else if(fpath[1] != ':'){
+			FolderFullPathFlag = false;
+		}
+
+		var ipath = item.folder;
+		var ItemFullPathFlag = true;
+		if(ipath == ''){
+			if(FolderFullPathFlag){
+				return fpath;
+			}
+			else{
+				return '';
+			}
+		}
+		if(ipath.length < 2){
+			ItemFullPathFlag = false;
+		}
+		else if(ipath[1] != ':'){
+			ItemFullPathFlag = false;
+		}
+		if(ItemFullPathFlag){
+			return ipath;
+		}
+		else{
+			if(FolderFullPathFlag){
+				return fpath + '\' + ipath;
+			}
+			else{
+				return '';
+			}
+		}
+	}
+
+	function DorothyItemFilenameWrite(filename){
+		if(filename == 'remove'){
+			return false;
+		}
+
+		if(item.filename != ''){
+			if(!item.filename.match('\[\[rename\]\]')){
+				if(item.filename.indexOf('.') != -1){
+					return true;
+				}
+				else{
+					var ext = filename.slice(filename.indexOf('.') , filename.length);
+					item.filename = item.filename + ext;
+					return true;
+				}
+			}
+		}
+		filename = filename.replace(/\[\[rename\]\]/ , '');
+		filename = filename.replace(/ +\]\]/g, ']]');
+
+		if(filename.match(/\[\[md=(.+?)\]\]/)){
+			var newDir = RegExp.$1;
+			//return false;
+			var path = DorothyFileSavePath();
+			if(path == ''){
+				return false;
+			}
+
+			filename = filename.replace(/\[\[md=.+?\]\]/g, '');
+			var d = new Directory(path + '\' + newDir);
+			if(!d.exists()){
+				d.make();
+			}
+			item.Folder = joint('\' , item.Folder , newDir);
+			item.Filename = filename;
+			return true;
+		}
+		if(filename.match(/\[\[cd=(.+?)\]\]/)){
+			var newDir = RegExp.$1;
+			filename = filename.replace(/\[\[cd=.+?\]\]/g, '');
+			item.Folder = joint('\' , item.Folder , newDir);
+			item.Filename = filename;
+			return true;
+		}
+		item.filename = filename;
+		return true;
+	};
+
+
+	//item.filename = item.filename.replace(/\[\[rename\]\]/ , '');
+	Dorothy.fileNameKey = item.url;
+	Dorothy.fileName = '';
+	if(urlinfo.url.search(/^ttp/) == 0){
+		urlinfo.url = 'h' + urlinfo.url;
+	}
+	Dorothy.oldUrl = urlinfo.url;
+	Dorothy.continueCount = 0;
+	Dorothy.cancel = false;
+	Dorothy.i = 0;
+	Dorothy.tempStr = '';
+
+	for(;;){
+		Dorothy.continue = false;
+		Dorothy.matchFlg = false;
+		Dorothy.matchFile = '';
+		Dorothy.matchType = '';
+		if(!Dorothy.cancel){
+			Dorothy.i = 0;
+		}
+		Dorothy.cancel = false;
+		for(Dorothy.i ; Dorothy.i < Dorothy.matchList.length ; Dorothy.i += 1){
+			if(urlinfo.url.match(Dorothy.matchList[Dorothy.i][0])){
+				Dorothy.matchFlg = true;
+				Dorothy.matchFile = Dorothy.matchList[Dorothy.i][1];
+				Dorothy.matchType = 'url';
+				break;
+			}
+			if(headers.hasKey('Referer')){
+				if(headers['Referer'] != '' && Dorothy.matchList[Dorothy.i][0].indexOf('referer:') != -1){
+					Dorothy.tempStr = 'referer:' + headers['Referer'];
+					if(Dorothy.tempStr.match(Dorothy.matchList[Dorothy.i][0])){
+						Dorothy.matchFlg = true;
+						Dorothy.matchFile = Dorothy.matchList[Dorothy.i][1];
+						Dorothy.matchType = 'referer';
+						break;
+					}
+				}
+			}
+			if(item.hasKey('filename')){
+				if(item.filename != '' && Dorothy.matchList[Dorothy.i][0].indexOf('filename:') != -1){
+					Dorothy.tempStr = 'filename:' + item.filename;
+					if(Dorothy.tempStr.match(Dorothy.matchList[Dorothy.i][0])){
+						Dorothy.matchFlg = true;
+						Dorothy.matchFile = Dorothy.matchList[Dorothy.i][1];
+						Dorothy.matchType = 'filename';
+						break;
+					}
+				}
+			}
+		}
+		if(!Dorothy.matchFlg){
+			println('unmatch');
+			return false;
+		}
+		//matchした時の処理
+		Dorothy.program = program_load(Dorothy.matchFile);
+		if(!Dorothy.program.match(/^\/\/Dorothy2(.+?)^\/\/end/m)){
+			println('error>プログラムが正しくありません。');
+			exit();
+		}
+		Dorothy.programHead = RegExp.$1;
+		if(!Dorothy.programHead.match(/^\/\/author=(.*?)$/m)){
+			println('error>author が未定義。');
+			exit();
+		}
+		if(RegExp.$1 == ''){
+			println('error>author が未定義。');
+			exit();
+		}
+		if(!Dorothy.programHead.match(/^\/\/caption=(.*?)$/m)){
+			println('error>caption が未定義。');
+			exit();
+		}
+		Dorothy.programName = RegExp.$1;
+		if(Dorothy.programName == ''){
+			println('error>caption が未定義。');
+			exit();
+		}
+		if(!Dorothy.programHead.match(/^\/\/version=(.*?)$/m)){
+			println('error>version が未定義。');
+			exit();
+		}
+		Dorothy.programVersion = RegExp.$1;
+		if(Dorothy.programVersion == ''){
+			println('error>version が未定義。');
+			exit();
+		}
+		println('match>' + Dorothy.programName + ' (' + Dorothy.programVersion + ')');
+		Dorothy.return = eval(Dorothy.program)();
+		if(Dorothy.cancel){
+			if(Dorothy.return != 'no-message'){
+				println('cancel>' + Dorothy.programName + ' (' + Dorothy.programVersion + ')');
+			}
+			Dorothy.i += 1;
+			continue;
+		}
+		if(Dorothy.oldUrl != urlinfo.url && urlinfo.url != ''){
+			if(Dorothy.return != 'no-message'){
+				println('new url>' + urlinfo.url);
+			}
+		}
+		if(Dorothy.fileName != ''){
+			if(Dorothy.return != 'no-message'){
+				println('new fileName>' + Dorothy.fileName);
+			}
+			if(IrvineInfo.version >= '1.2.2'){
+				if(!DorothyItemFilenameWrite(Dorothy.fileName)){
+					xoriniFilenameWrite2(Dorothy.fileNameKey, Dorothy.fileName, folderdata);
+				}
+			}
+			else{
+				xoriniFilenameWrite2(Dorothy.fileNameKey, Dorothy.fileName, folderdata);
+			}
+		}
+		if(!Dorothy.continue){
+			break;
+		}
+		else{
+			Dorothy.continueCount += 1;
+			if(Dorothy.continueCount > 10){
+				println('error>ループしています。');
+				exit();
+			}
+		}
+	}
+	return true;
+}
+import xor.*;

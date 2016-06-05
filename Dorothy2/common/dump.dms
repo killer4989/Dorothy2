@@ -1,0 +1,37 @@
+//Dorothy2
+//caption=dump
+//version=1.0
+//hint=test
+//match=
+//author=xor
+//path=common
+//end
+function dump(data){
+	var buffer = new StringBuffer(data);
+	var j = 0;
+	var s = format('%.4x : ' , 0);
+	var sc = '';
+	var c;
+	var t = new Strings;
+	t.add('0000 : +0 +1 +2 +3 +4 +5 +6 +7 +8 +9 +A +B +C +D +E +F 0123456789ABCDEF');
+	t.add('-----------------------------------------------------------------------');
+	for(var i = 0 ; i < buffer.length ; i++){
+		c = buffer.charCodeAt(i);
+		s += format('%.2x ' , c);
+		sc += ((c < 0x20 || 0x80 < c)?' ' : String.fromCharCode(c));
+		if(15 == j++){
+			t.add(s  + sc);
+			j = 0;
+			s = format('%.4x : ' , (i + 1).int);
+			sc = '';
+		}
+	}
+	if(j != 0){
+		for(; j < 16 ; j++){
+			s += '** ';
+		}
+		t.add(s + sc);
+	}
+	t.add('------------------------------------------------------------------------');
+	return t;
+}

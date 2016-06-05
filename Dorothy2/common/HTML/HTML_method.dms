@@ -1,0 +1,58 @@
+//Dorothy2
+//caption=HTML_method
+//version=1.0
+//hint=test
+//match=
+//author=xor
+//path=common\HTML
+//end
+function HTML_forms_id(id){
+	var i;
+	for(i in this.forms){
+		if(this.forms[i].form.ID == id){
+			return i;
+		}
+	}
+	return null;
+}
+,
+function HTML_forms_name(name){
+	var i;
+	for(i in this.forms){
+		if(this.forms[i].form.NAME == name){
+			return i;
+		}
+	}
+	return null;
+},
+function HTML_forms_class(name){
+	var i;
+	for(i in this.forms){
+		if(this.forms[i].form.CLASS == name){
+			return i;
+		}
+	}
+	return null;
+}
+,
+function HTML_inputs_type(type){
+	var j;
+	var ret = [];
+	for(j in this.inputs){
+		if(this.inputs[j].input.TYPE == type){
+			ret.add(j);
+		}
+	}
+	return ret;
+}
+,
+function HTML_inputs_name(name){
+	var j;
+	var ret = [];
+	for(j in this.inputs){
+		if(this.inputs[j].input.NAME == name){
+			ret.add(j);
+		}
+	}
+	return ret;
+}

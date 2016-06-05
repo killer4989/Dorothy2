@@ -1,0 +1,98 @@
+//Dorothy2
+//caption=gzip
+//version=1.0
+//hint=
+//match=
+//author=xor
+//generator=
+//path=common
+//end
+function gzip_decode(indata){
+	common_load('zlib');
+	var inbuff = new StringBuffer(indata);
+
+
+	var ASCII_FLAG   = 0x01; /* bit 0 set: file probably ascii text */
+	var HEAD_CRC     = 0x02; /* bit 1 set: header CRC present */
+	var EXTRA_FIELD  = 0x04; /* bit 2 set: extra field present */
+	var ORIG_NAME    = 0x08; /* bit 3 set: original file name present */
+	var COMMENT      = 0x10; /* bit 4 set: file comment present */
+	var RESERVED     = 0xE0; /* bits 5..7: reserved */
+
+	if(inbuff.charCodeAt(0) != 0x1f || inbuff.charCodeAt(1) != 0x8b){
+		println('gzip header error');
+		exit();
+	}
+	var method = inbuff.charCodeAt(2);
+	var flags  = inbuff.charCodeAt(3);
+	if(method != 8 || (flags & RESERVED) != 0){
+		println('gzip header error 2');
+		exit();
+	}
+	var i = 10;
+	if(flags & EXTRA_FIELD){
+		var len = 0;
+		len = inbuff.charCodeAt(i++);
+		len += inbuff.charCodeAt(i++) << 8;
+		i += len;
+	}
+	if(flags & ORIG_NAME){
+		while(inbuff.charCodeAt(i++) != 0);
+	}
+	if(flags & COMMENT){
+		while(inbuff.charCodeAt(i++) != 0);
+	}
+	if(flags & HEAD_CRC){
+		i += 2;
+	}
+	inbuff = inbuff.delete(0,i);
+
+
+	var z = new zlib();
+	BUFFER_SIZE = 4095*20;	//bufferより大きいデータ－でバグがある、とりあえずbufferを大きくして凌ぐ
+	var outbuff = new StringBuffer(BUFFER_SIZE);
+	var outdata = new String();
+
+	var ret;
+
+	ret = z.inflateInit2(-15);
+	if(ret != Z_OK){
+		println('gzip init error ' + z.z_stream.msg);
+		exit();
+	}
+
+
+	z.z_stream.next_in = inbuff;
+	z.z_stream.avail_in = inbuff.length;
+	z.z_stream.next_out = outbuff;
+	z.z_stream.avail_out = BUFFER_SIZE;
+
+
+	ret = Z_OK;
+	while(ret != Z_STREAM_END){
+		if(z.z_stream.avail_in == 0){
+			break;
+		}
+		ret = z.inflate(Z_NO_FLUSH);
+		if(ret == Z_STREAM_END){
+			var used = BUFFER_SIZE - z.z_stream.avail_out;
+			outdata = outdata.concat(outbuff.substr(0,used));
+			break;
+		}
+		if(ret != Z_OK){
+			println('gzip error 3');
+			exit();
+		}
+		if(z.z_stream.avail_out == 0){
+			outdata = outdata.concat(outbuff.toString());
+			z.z_stream.next_out = outbuff;
+			z.z_stream.avail_out = BUFFER_SIZE;
+		}
+	}
+	ret = z.inflateEnd();
+	if(ret != Z_OK){
+		println('error 2 ' + z.z_stream.msg);
+		exit();
+	}
+	return outdata;
+}

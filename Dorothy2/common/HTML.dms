@@ -1,0 +1,9 @@
+//Dorothy2
+//caption=HTML
+//version=1.0
+//hint=test
+//match=
+//author=xor
+//path=common
+//end
+common_load('HTML\HTML','HTML\HTML_form','HTML\HTML_input','HTML\HTML_method' );

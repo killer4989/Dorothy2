@@ -1,0 +1,538 @@
+//Dorothy2
+//caption=NTT CTU(フレッツ光)
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=system\modem
+//end
+//=============================================================================
+//設定画面用ファンクション
+//=============================================================================
+function modem_setting(){
+	var frm = new VCLForm(true);
+
+	frm.loadFromFile(dorothy2_system + 'modem\NTT_CTU.dfm');
+
+	frm.ini = new Ini(dorothy2_system + 'modem\NTT_CTU.ini');
+	frm.Edit1.Text = frm.ini.read('user' , 'id' , '');
+	frm.Edit2.Text = frm.ini.read('user' , 'pass' , '');
+	frm.Edit3.Text = frm.ini.read('user' , 'ifno' , '1');
+	frm.Memo1.Lines.add("このスクリプトは説明をよく読んでから行ってください" );
+	frm.Memo1.Lines.add("インターネットに接続できなく為ってしまう場合があります" );
+	frm.Memo1.Lines.add("ブラウザからＣＵＴにアクセスして、自分で設定が出来ない人は使わないで下さい" );
+
+
+	//=====================================================================
+	//テスト
+	//=====================================================================
+	frm.Button1.onClick = function(){
+		var id = frm.Edit1.Text;
+		var pass = frm.Edit2.Text;
+		var ifno = frm.Edit3.Text;
+		var cookie = new IrvineCookieManager;
+		var logOut = function(){
+			frm.Memo1.Lines.add("ログアウトします");
+			var https = new HTTPS;
+			https.timeout = 10;
+			var adr = 'https://ctu.fletsnet.com/CtuC101/logout.do';
+			try{
+				var data = https.get(adr);
+			}
+			catch(e){
+				frm.Memo1.Lines.add(e);
+			}
+			if(https.responseHeader.code == 302){
+				if(https.responseHeader.location == 'https://ctu.fletsnet.com/'){
+					frm.Memo1.Lines.add("ログアウトしました。");
+					return true;
+				}
+			}
+			if(https.responseHeader.code != 200){
+				frm.Memo1.Lines.add("ログアウト失敗  " + https.responseHeader.code);
+				return false;
+			}
+			frm.Memo1.Lines.add("ログアウト失敗?");
+			return false;
+		};
+
+
+		//=============================================================
+		//接続
+		//=============================================================
+		frm.Memo1.Lines.add("ＮＴＴ端末に接続します。");
+		var https = new HTTPS;
+		var data = '';
+		data = https.get('https://ctu.fletsnet.com/CtuC101/init.do');
+		if(https.responseHeader.code != 200){
+			frm.Memo1.Lines.add("接続失敗  " + https.responseHeader.code);
+			return;
+		}
+		frm.Memo1.Lines.add("接続成功");
+		cookie.setCookie('ctu.fletsnet.com',https.responseHeader.cookie);
+
+
+
+		//=============================================================
+		//ログイン
+		//=============================================================
+		frm.Memo1.Lines.add("ログインします");
+		var adr = 'https://ctu.fletsnet.com/CtuC101/login.do?dispUserId=&dispCircuitId=&' 	+ 'C101_agreementFlg=1' 
+									+ '&userId=' + id
+								 	+ '&passWd=' + pass;
+		https.requestHeader['Cookie'] = cookie.getCookie('ctu.fletsnet.com');
+		data = 'non';
+		https.request('GET' , adr);
+		https.response();
+		data = https.read(https.responseHeader['content-length']);
+		https.close();
+		
+		if(https.responseHeader.code != 200){
+			frm.Memo1.Lines.add("ログイン失敗  " + https.responseHeader.code);
+			return;
+		}
+		if(data.indexOf('エラーが発生しました'.toUTF8()) != -1){
+			frm.Memo1.Lines.add("エラーが発生しました");
+			if(data.indexOf('既にログインしています。複数同時にはログインはできません。'.toUTF8()) != -1){
+				frm.Memo1.Lines.add("既にログインしています。複数同時にはログインはできません。");
+				return;
+			}
+			return;
+		}
+		if(data.indexOf('<frame src="/CtuC1023.do?dispUserId=&dispCircuitId=" noresize>') == -1){
+			frm.Memo1.Lines.add("ログイン出来ません");
+			return;
+		}
+		frm.Memo1.Lines.add("ログイン成功");
+		cookie.setCookie('ctu.fletsnet.com',https.responseHeader.cookie);
+		https.requestHeader['Cookie'] = cookie.getCookie('ctu.fletsnet.com');
+
+
+
+		//=============================================================
+		//接続状態確認
+		//=============================================================
+		frm.Memo1.Lines.add('接続状態確認');
+		var ip1 = '';
+		var ip2 = '';
+		data = 'null';
+		adr = 'https://ctu.fletsnet.com/CtuC1023.do?dispUserId=&dispCircuitId=';
+		data = https.get(adr);
+		if(https.responseHeader.code != 200){
+			frm.Memo1.Lines.add("失敗  " + https.responseHeader.code);
+			return;
+		}
+		var connect = '';
+		if(data.match("doAction\\('" + ifno + "', 'CONNECT_OFF_CLICKRUN_C1025'\\)")){
+			frm.Memo1.Lines.add("接続中です");
+			connect = 'on';
+		}
+		if(data.match("doAction\\('" + ifno + "', 'CONNECT_ON_CLICKRUN_C1025'\\)")){
+			frm.Memo1.Lines.add("切断中です");
+			connect = 'off';
+		}
+		if(connect == ''){
+			frm.Memo1.Lines.add('接続状態を確認出来ません');
+			logOut();
+			return;
+		}
+
+		if(connect == 'on'){
+			frm.Memo1.Lines.add("グローバルＩＰを確認します");
+			data = 'null';
+			adr = 'https://ctu.fletsnet.com//CtuC252/init.do?comNo=1';
+			https.request('GET' , adr);
+			https.response();
+			data = https.read(https.responseHeader['content-length']);
+			https.close();
+			//data = https.get(adr);
+			if(https.responseHeader.code != 200){
+				frm.Memo1.Lines.add("失敗  " + https.responseHeader.code);
+				logOut();
+				return;
+			}
+			if(data.indexOf('IPv4 Address/NetMask') == -1){
+				frm.Memo1.Lines.add("エラーが発生しました");
+				logOut();
+				return;
+			}
+			if(!data.match(/ISP1\s+([\d.]+\/\d+)\s/)){
+				frm.Memo1.Lines.add("エラーが発生しました");
+				logOut();
+				return;
+			}
+			var IPv4 = RegExp.$1;
+			frm.Memo1.Lines.add('IPv4 Address/NetMask');
+			frm.Memo1.Lines.add(IPv4);
+			ip1 = IPv4;
+
+
+			frm.Memo1.Lines.add("切断します");
+			adr = 'https://ctu.fletsnet.com/CtuC1023/switch.do';
+			post = 'selectIfNo=1&selectButton=CONNECT_OFF_CLICKRUN_C1025';
+			https.request('POST' , adr , post);
+			https.response();
+			data = https.read(https.responseHeader['content-length']);
+			https.close();
+			//data = https.post(adr , post);
+			if(https.responseHeader.code != 200){
+				frm.Memo1.Lines.add("切断失敗  " + https.responseHeader.code);
+				logOut();
+				return;
+			}
+			if(data.indexOf('name="CONNECT_OFF_CLICKRUN_C1025"') != -1){
+				frm.Memo1.Lines.add("切断失敗  ");
+				logOut();
+				return;
+			}
+			frm.Memo1.Lines.add("切断しました");
+			//frm.Memo1.Lines.add("１０秒待機します");
+			//sleep(10 * 1000);
+		}
+
+		frm.Memo1.Lines.add("接続します");
+		adr = 'https://ctu.fletsnet.com/CtuC1023/switch.do';
+		post = 'selectIfNo=1&selectButton=CONNECT_ON_CLICKRUN_C1025';
+		https.request('POST' , adr , post);
+		https.response();
+		data = https.read(https.responseHeader['content-length']);
+		https.close();
+		//data = https.post(adr , post);
+		if(https.responseHeader.code != 200){
+			frm.Memo1.Lines.add("接続失敗  " + https.responseHeader.code);
+			logOut();
+			return;
+		}
+		if(data.indexOf('name="CONNECT_ON_CLICKRUN_C1025"') != -1){
+			frm.Memo1.Lines.add("接続失敗  ");
+			logOut();
+			return;
+		}
+		frm.Memo1.Lines.add("接続しました");
+
+
+		frm.Memo1.Lines.add("グローバルＩＰを確認します");
+		adr = 'https://ctu.fletsnet.com//CtuC252/init.do?comNo=1';
+		https.request('GET' , adr);
+		https.response();
+		data = https.read(https.responseHeader['content-length']);
+		https.close();
+		//data = https.get(adr);
+		if(https.responseHeader.code != 200){
+			frm.Memo1.Lines.add("失敗  " + https.responseHeader.code);
+			logOut();
+			return;
+		}
+		if(data.indexOf('IPv4 Address/NetMask') == -1){
+			frm.Memo1.Lines.add("エラーが発生しました");
+			logOut();
+			return;
+		}
+		if(!data.match(/ISP1\s+([\d.]+\/\d+)\s/)){
+			frm.Memo1.Lines.add("エラーが発生しました");
+			logOut();
+			return;
+		}
+		var IPv4 = RegExp.$1;
+		frm.Memo1.Lines.add('IPv4 Address/NetMask');
+		frm.Memo1.Lines.add(IPv4);
+		ip2 = IPv4;
+
+
+		if(logOut()){
+			frm.Memo1.Lines.add(ip1 + ' ---> ' + ip2);
+			if(ip1 != ip2){
+				frm.Memo1.Lines.add('正常に稼動しました');
+			}
+			else{
+				frm.Memo1.Lines.add('IPは切換出来ませんでした');
+			}
+		}
+	};
+
+
+	//=====================================================================
+	//ログアウト
+	//=====================================================================
+	frm.Button2.onClick = function(){
+		var id = frm.Edit1.Text;
+		var pass = frm.Edit2.Text;
+		var ifno = frm.Edit3.Text;
+		var https = new HTTPS;
+		var logOut = function(){
+			frm.Memo1.Lines.add("ログアウトします");
+			var https = new HTTPS;
+			var adr = 'https://ctu.fletsnet.com/CtuC101/logout.do';
+			try{
+				var data = https.get(adr);
+			}
+			catch(e){
+				frm.Memo1.Lines.add(e);
+			}
+			if(https.responseHeader.code == 302){
+				if(https.responseHeader.location == 'https://ctu.fletsnet.com/'){
+					frm.Memo1.Lines.add("ログアウトしました。");
+					return true;
+				}
+			}
+			if(https.responseHeader.code != 200){
+				frm.Memo1.Lines.add("ログアウト失敗  " + https.responseHeader.code);
+				return false;
+			}
+			frm.Memo1.Lines.add("ログアウト失敗?");
+			return false;
+		};
+		logOut();
+	};
+
+
+
+
+
+
+	frm.CancelBtn.onClick = function(){
+		frm.close();
+	};
+	frm.OKBtn.onClick = function(){
+		frm.ini.write('user' , 'id' , frm.Edit1.Text);
+		frm.ini.write('user' , 'pass'   , frm.Edit2.Text);
+		frm.ini.write('user' , 'ifno'   , frm.Edit3.Text);
+		frm.ini.update();
+	};
+	frm.showModal();
+}
+,
+
+//=============================================================================
+//実行用ファクション
+//=============================================================================
+function modem_ipChange(){
+	println('NTT CTU IP チェンジ');
+	var ini = new Ini(Dorothy.path + 'system\modem\NTT_CTU.ini');
+	var id = ini.read('user' , 'id' , '');
+	var pass = ini.read('user' , 'pass' , '');
+	var ifno = ini.read('user' , 'ifno' , '1');
+
+	var cookie = new IrvineCookieManager;
+
+	var logOut = function(){
+		println("ログアウトします");
+		var https = new HTTPS;
+		https.timeout = 10;
+		var adr = 'https://ctu.fletsnet.com/CtuC101/logout.do';
+		try{
+			var data = https.get(adr);
+		}
+		catch(e){
+			println(e);
+			return false;
+		}
+		if(https.responseHeader.code == 302){
+			if(https.responseHeader.location == 'https://ctu.fletsnet.com/'){
+				println("ログアウトしました。");
+				return true;
+			}
+		}
+		if(https.responseHeader.code != 200){
+			println("ログアウト失敗  " + https.responseHeader.code);
+			return false;
+		}
+		println("ログアウト失敗?");
+		return false;
+	};
+
+	//=============================================================
+	//接続
+	//=============================================================
+	println("ＮＴＴ端末に接続します。");
+	var https = new HTTPS;
+	var data = '';
+	data = https.get('https://ctu.fletsnet.com/CtuC101/init.do');
+	if(https.responseHeader.code != 200){
+		println("接続失敗  " + https.responseHeader.code);
+		return 1;
+	}
+	println("接続成功");
+	cookie.setCookie('ctu.fletsnet.com',https.responseHeader.cookie);
+
+
+
+	//=============================================================
+	//ログイン
+	//=============================================================
+	println("ログインします");
+	var adr = 'https://ctu.fletsnet.com/CtuC101/login.do?dispUserId=&dispCircuitId=&' 	+ 'C101_agreementFlg=1' 
+								+ '&userId=' + id
+							 	+ '&passWd=' + pass;
+	https.requestHeader['Cookie'] = cookie.getCookie('ctu.fletsnet.com');
+	data = 'non';
+	https.request('GET' , adr);
+	https.response();
+	data = https.read(https.responseHeader['content-length']);
+	https.close();
+	
+	if(https.responseHeader.code != 200){
+		println("ログイン失敗  " + https.responseHeader.code);
+		return 1;
+	}
+	if(data.indexOf('エラーが発生しました'.toUTF8()) != -1){
+		println("エラーが発生しました");
+		if(data.indexOf('既にログインしています。複数同時にはログインはできません。'.toUTF8()) != -1){
+			println("既にログインしています。複数同時にはログインはできません。");
+			return 1;
+		}
+		return 1;
+	}
+	if(data.indexOf('<frame src="/CtuC1023.do?dispUserId=&dispCircuitId=" noresize>') == -1){
+		println("ログイン出来ません");
+		return 1;
+	}
+	println("ログイン成功");
+	cookie.setCookie('ctu.fletsnet.com',https.responseHeader.cookie);
+	https.requestHeader['Cookie'] = cookie.getCookie('ctu.fletsnet.com');
+
+
+
+	//=============================================================
+	//接続状態確認
+	//=============================================================
+	println('接続状態確認');
+	var ip1 = '';
+	var ip2 = '';
+	data = 'null';
+	adr = 'https://ctu.fletsnet.com/CtuC1023.do?dispUserId=&dispCircuitId=';
+	data = https.get(adr);
+	if(https.responseHeader.code != 200){
+		println("失敗  " + https.responseHeader.code);
+		return 1;
+	}
+	var connect = '';
+	if(data.match("doAction\\('" + ifno + "', 'CONNECT_OFF_CLICKRUN_C1025'\\)")){
+		println("接続中です");
+		connect = 'on';
+	}
+	if(data.match("doAction\\('" + ifno + "', 'CONNECT_ON_CLICKRUN_C1025'\\)")){
+		println("切断中です");
+		connect = 'off';
+	}
+	if(connect == ''){
+		println('接続状態を確認出来ません');
+		logOut();
+		return 1;
+	}
+
+	if(connect == 'on'){
+		println("グローバルＩＰを確認します");
+		data = 'null';
+		adr = 'https://ctu.fletsnet.com//CtuC252/init.do?comNo=1';
+		https.request('GET' , adr);
+		https.response();
+		data = https.read(https.responseHeader['content-length']);
+		https.close();
+		//data = https.get(adr);
+		if(https.responseHeader.code != 200){
+			println("失敗  " + https.responseHeader.code);
+			logOut();
+			return 1;
+		}
+		if(data.indexOf('IPv4 Address/NetMask') == -1){
+			println("エラーが発生しました");
+			logOut();
+			return 1;
+		}
+		if(!data.match(/ISP1\s+([\d.]+\/\d+)\s/)){
+			println("エラーが発生しました");
+			logOut();
+			return 1;
+		}
+		var IPv4 = RegExp.$1;
+		println('IPv4 Address/NetMask');
+		println(IPv4);
+		ip1 = IPv4;
+
+
+		println("切断します");
+		adr = 'https://ctu.fletsnet.com/CtuC1023/switch.do';
+		post = 'selectIfNo=1&selectButton=CONNECT_OFF_CLICKRUN_C1025';
+		https.request('POST' , adr , post);
+		https.response();
+		data = https.read(https.responseHeader['content-length']);
+		https.close();
+		//data = https.post(adr , post);
+		if(https.responseHeader.code != 200){
+			println("切断失敗  " + https.responseHeader.code);
+			logOut();
+			return 1;
+		}
+		if(data.indexOf('name="CONNECT_OFF_CLICKRUN_C1025"') != -1){
+			println("切断失敗  ");
+			logOut();
+			return 1;
+		}
+		println("切断しました");
+		//println("１０秒待機します");
+		//sleep(10 * 1000);
+	}
+
+	println("接続します");
+	adr = 'https://ctu.fletsnet.com/CtuC1023/switch.do';
+	post = 'selectIfNo=1&selectButton=CONNECT_ON_CLICKRUN_C1025';
+	https.request('POST' , adr , post);
+	https.response();
+	data = https.read(https.responseHeader['content-length']);
+	https.close();
+	//data = https.post(adr , post);
+	if(https.responseHeader.code != 200){
+		println("接続失敗  " + https.responseHeader.code);
+		logOut();
+		return 1;
+	}
+	if(data.indexOf('name="CONNECT_ON_CLICKRUN_C1025"') != -1){
+		println("接続失敗  ");
+		logOut();
+		return 1;
+	}
+	println("接続しました");
+
+
+	println("グローバルＩＰを確認します");
+	adr = 'https://ctu.fletsnet.com//CtuC252/init.do?comNo=1';
+	https.request('GET' , adr);
+	https.response();
+	data = https.read(https.responseHeader['content-length']);
+	https.close();
+	//data = https.get(adr);
+	if(https.responseHeader.code != 200){
+		println("失敗  " + https.responseHeader.code);
+		logOut();
+		return 1;
+	}
+	if(data.indexOf('IPv4 Address/NetMask') == -1){
+		println("エラーが発生しました");
+		logOut();
+		return 1;
+	}
+	if(!data.match(/ISP1\s+([\d.]+\/\d+)\s/)){
+		println("エラーが発生しました");
+		logOut();
+		return 1;
+	}
+	var IPv4 = RegExp.$1;
+	println('IPv4 Address/NetMask');
+	println(IPv4);
+	ip2 = IPv4;
+
+
+	if(logOut()){
+		println(ip1 + ' ---> ' + ip2);
+		if(ip1 != ip2){
+			println('正常に稼動しました');
+			return 0;
+		}
+		else{
+			println('IPは切換出来ませんでした');
+			return 1;
+		}
+	}
+	return 1;
+}

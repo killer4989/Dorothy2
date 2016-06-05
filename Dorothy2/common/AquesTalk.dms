@@ -1,0 +1,88 @@
+//Dorothy2
+//caption=AquesTalk
+//version=1.00
+//hint=
+//match=
+//author=xor
+//path=common
+//end
+function AquesTalk(){
+	this.exists = true;
+	if(! new File(Dorothy.path + 'bin\AquesTalkDa.dll').exists()){
+		this.exists = false;
+		print_debug('AquesTalkDa.dll が在りません');
+		return;
+	}
+	this.dll = new DynaCall;
+	this.dll.register(Dorothy.path + 'bin\AquesTalkDa.dll','AquesTalkDa_PlaySync'		,'f=s','i=sl'	,'r=l');
+	this.dll.register(Dorothy.path + 'bin\AquesTalkDa.dll','AquesTalkDa_Create'		,'f=s' 		,'r=h');
+	this.dll.register(Dorothy.path + 'bin\AquesTalkDa.dll','AquesTalkDa_Release'		,'f=s','i=h');
+	this.dll.register(Dorothy.path + 'bin\AquesTalkDa.dll','AquesTalkDa_Play'		,'f=s','i=hslhii' ,'r=l');
+	this.dll.register(Dorothy.path + 'bin\AquesTalkDa.dll','AquesTalkDa_Stop'		,'f=s','i=h');
+	this.dll.register(Dorothy.path + 'bin\AquesTalkDa.dll','AquesTalkDa_IsPlay'		,'f=s','i=h','r=l');
+
+	this.error = new Array;
+	this.error['100'] =  ' その他のエラー';
+	this.error['101'] =  ' メモリ不足';
+	this.error['102'] =  ' 音声記号列に未定義の読み記号が指定された';
+	this.error['103'] =  ' 韻律データの時間長がマイナスなっている';
+	this.error['104'] =  ' 内部エラー(未定義の区切りコード検出）';
+	this.error['105'] =  ' 音声記号列に未定義の読み記号が指定された';
+	this.error['106'] =  ' 音声記号列のタグの指定が正しくない';
+	this.error['107'] =  ' タグの長さが制限を越えている（または[>]がみつからない）';
+	this.error['108'] =  ' タグ内の値の指定が正しくない';
+	this.error['109'] =  ' WAVE 再生ができない（サウンドドライバ関連の問題）';
+	this.error['110'] =  ' WAVE 再生ができない（サウンドドライバ関連の問題非同期再生）';
+	this.error['111'] =  ' 発声すべきデータがない';
+	this.error['200'] =  ' 音声記号列が長すぎる';
+	this.error['201'] =  ' １つのフレーズ中の読み記号が多すぎる';
+	this.error['202'] =  ' 音声記号列が長い（内部バッファオーバー1）';
+	this.error['203'] =  ' ヒープメモリ不足';
+	this.error['204'] =  ' 音声記号列が長い（内部バッファオーバー1）';
+
+}
+,
+AquesTalk.prototype.PlaySync = function(koe , iSpeed){
+	if(!this.exists){
+		return 0;
+	}
+	return this.dll.AquesTalkDa_PlaySync(koe , iSpeed);
+}
+,
+AquesTalk.prototype.Create = function(){
+	if(!this.exists){
+		return;
+	}
+	this.hMe = this.dll.AquesTalkDa_Create();
+	return;
+}
+,
+AquesTalk.prototype.Release = function(){
+	if(!this.exists){
+		return;
+	}
+	this.dll.AquesTalkDa_Release(this.hMe);
+	return;
+}
+,
+AquesTalk.prototype.Play = function(koe, iSpeed){
+	if(!this.exists){
+		return 0;
+	}
+	return this.dll.AquesTalkDa_Play(this.hMe , koe , iSpeed , null , null , null);
+}
+,
+AquesTalk.prototype.Stop = function(){
+	if(!this.exists){
+		return;
+	}
+	this.dll.AquesTalkDa_Stop(this.hMe);
+	return;
+}
+,
+AquesTalk.prototype.IsPlay = function(){
+	if(!this.exists){
+		return 0;
+	}
+	return this.dll.AquesTalkDa_IsPlay(this.hMe);
+}

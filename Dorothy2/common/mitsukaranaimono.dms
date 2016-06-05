@@ -1,0 +1,22 @@
+//Dorothy2
+//caption=見つからない物
+//version=1.0
+//hint=見つからない物
+//match=
+//author=xor
+//path=common
+//end
+function mitsukaranaimono(str){
+	if(!isUndefined(str)){
+		urlinfo.url = str;
+		urlinfo.proxy = '';
+		return 'no-message';
+	}
+	var msg = ['愛' , '夢' , '希望' , 'イェンダーの魔除け' , 'ウイルス' , 'たこ焼きなのに、たこ' , '青い空' , 'あなたの良心' 
+			, 'あなたには思いやり'　, 'ミノフスキー粒子が濃くて、敵' , '居場所' , '彼女' , '彼氏' , '仕事' , '犯人' , 'タマちゃん' 
+			, '年金' , '裏サイト' , 'あの頃の面影' , '交際相手' , 'なくした恋' , '人生' , 'アレ' , 'あなたの将来' 
+			, 'バンドメンバー' , 'メイド喫茶' , '大量破壊兵器' , '卒業生一覧に名前' ];
+	urlinfo.url = msg[Math.round(Math.random() * (msg.length -1) )];
+	urlinfo.proxy = '';
+	return 'no-message';
+}

@@ -1,0 +1,202 @@
+//Dorothy2
+//caption=gif
+//version=1.01
+//hint=GIFフォーマット解析
+//match=
+//author=xor
+//path=common
+//end
+function gif(data){
+
+var bool = function(data){
+	if(data == 1){
+		return true;
+	}
+	if(data == 0){
+		return false;
+	}
+	println('error bool');
+	exit();
+};
+	println('GIFフォーマット解析');
+	var GIF = new Object;
+	
+	GIF.Header = new Object;
+	
+	GIF.Block = new Object;
+	
+	var buffer = new StringBuffer(data);
+	var position = new Number(0);
+	
+	GIF.Size =buffer.length;
+	//=======================================
+	//HEADER
+	//=======================================
+	//println('[header]');
+	GIF.Header.Signature = buffer.substring(0 , 3);
+	GIF.Header.Version = buffer.substring(3 , 6);
+	//println(GIF.Header.Signature + GIF.Header.Version);
+	
+	if(GIF.Header.Signature != 'GIF'){
+		return false;
+	}
+	GIF.Header.Logical_Screen_Width = buffer.int(6);
+	//println('w = ' + GIF.Header.Logical_Screen_Width);
+	GIF.Header.Logical_Screen_Height = buffer.int(8);
+	//println('h = ' + GIF.Header.Logical_Screen_Height);
+	GIF.Header.Global_Color_Table_Flag = bool(buffer.bit(10 , bit('1000 0000')));
+	//println('GCTF = ' + GIF.Header.Global_Color_Table_Flag);
+	GIF.Header.Color_Resolution = buffer.bit(10 , bit('0111 0000'));
+	//println('CR = ' + GIF.Header.Color_Resolution);
+	GIF.Header.Sort_Flag = bool(buffer.bit(10 , bit('0000 1000')));
+	//println('SF = ' + GIF.Header.Sort_Flag);
+	GIF.Header.Size_of_Global_Color_Table = buffer.bit(10 , bit('0000 0111'));
+	//println('SGCT = ' + GIF.Header.Size_of_Global_Color_Table);
+	GIF.Header.Background_Color_Index = buffer.char(11);
+	//println('BCI = ' + GIF.Header.Background_Color_Index);
+	GIF.Header.Pixel_Aspect_Ratio = buffer.char(12);
+	//println('PAR = ' + GIF.Header.Pixel_Aspect_Ratio);
+	position = 13;
+	if(GIF.Header.Global_Color_Table_Flag){
+		temp = Math.pow(2 , (GIF.Header.Size_of_Global_Color_Table + 1)) * 3;
+		GIF.Header.Global_Color_Table = buffer.substring(13 , 13 + temp);
+		position += temp;
+	}
+	//=======================================
+	//BLOCK
+	//=======================================
+	//println('[BLOCK]');
+	var bi = 0; //block index
+	while(buffer.char(position) != 0x3b){
+		//printfln('Block_type 0x%.2x' , buffer.char(position));
+		GIF.Block.Index = bi;
+		GIF.Block.type = buffer.char(position);
+		position += 1;
+		switch(GIF.Block.type){
+			case 0x21 :
+				GIF.Block.label = buffer.char(position);
+				position += 1;
+				switch(GIF.Block.label){
+					case 0xf9 :
+						println('Graphic_Control_Extension');
+						GIF.Block.Graphic_Control_Extension = new Object;
+						GIF.Block.Graphic_Control_Extension.Block_Size = buffer.char(position);
+						position += 1;
+						GIF.Block.Graphic_Control_Extension.Reserved = buffer.char(position);
+						position += 1;
+						GIF.Block.Graphic_Control_Extension.Delay_Time = buffer.int(position);
+						position += 2;
+						GIF.Block.Graphic_Control_Extension.Transparent_Color_Index = buffer.char(position);
+						position += 1;
+						GIF.Block.Graphic_Control_Extension.Block_Terminator = buffer.char(position);
+						position += 1;
+						break;
+					case 0xfe :
+						println('Comment_Extension');
+						GIF.Block.Comment_Extension = new Object;
+						var cei = 0;
+						while(buffer.char(position) !=  0x00){
+							GIF.Block.Comment_Extension[cei] = new Object;
+							GIF.Block.Comment_Extension[cei].Block_Size = buffer.char(position);
+							position += 1;
+							GIF.Block.Comment_Extension[cei].Comment_Data = buffer.substring(13 , 13 + GIF.Block.Comment_Extension[cei].Block_Size);
+							position += 1 + GIF.Block.Comment_Extension[cei].Block_Size;
+							++cei;
+						}
+						position += 1;
+						break;
+					case 0x01 :
+						println('Plain_Text_Extension');
+						GIF.Block.Plain_Text_Extension = new Object;
+						GIF.Block.Plain_Text_Extension.Block_Size1 = buffer.char(position);
+						position += 1;
+						position += GIF.Block.Plain_Text_Extension.Block_Size1;
+						var ptei = 0;
+						while(buffer.char(position) !=  0x00){
+							GIF.Block.Plain_Text_Extension[ptei] = new Object;
+							GIF.Block.Plain_Text_Extension[ptei].Block_Size = buffer.char(position);
+							position += 1;
+							position += GIF.Block.Plain_Text_Extension[ptei].Block_Size;
+							++ptei;
+						}
+						position += 1;
+						break;
+					case 0xff :
+						println('Application_Extension');
+						GIF.Block.Application_Extension = new Object;
+						GIF.Block.Application_Extension.Block_Size1 = buffer.char(position);
+						position += 1;
+						position += GIF.Block.Application_Extension.Block_Size1;
+						var aei = 0;
+						while(buffer.char(position) !=  0x00){
+							GIF.Block.Application_Extension[aei] = new Object;
+							GIF.Block.Application_Extension[aei].Block_Size = buffer.char(position);
+							position += 1;
+							position += GIF.Block.Application_Extension[aei].Block_Size;
+							++aei;
+						}
+						position += 1;
+						break;
+				}
+				break;
+			case 0x2c :
+				//println('Image_Block');
+				GIF.Block.Image_Block = new Object;
+				GIF.Block.Image_Block.Image_Left_Position = buffer.int(position);
+				position += 2;
+				//println('Image_Left_Position ' + GIF.Block.Image_Block.Image_Left_Position);
+				GIF.Block.Image_Block.Image_Top_Position = buffer.int(position);
+				position += 2;
+				//println('Image_Top_Position ' + GIF.Block.Image_Block.Image_Top_Position);
+				GIF.Block.Image_Block.Image_Width = buffer.int(position);
+				position += 2;
+				//println('Image_Width ' + GIF.Block.Image_Block.Image_Width);
+				GIF.Block.Image_Block.Image_Height = buffer.int(position);
+				position += 2;
+				//println('Image_Height ' + GIF.Block.Image_Block.Image_Height);
+				temp = buffer.char(position);
+				position += 1;
+				//println(temp);
+				GIF.Block.Image_Block.Local_Color_Table_Flag = bool(temp >>> 7);
+				//println('Local_Color_Table_Flag ' + GIF.Block.Image_Block.Local_Color_Table_Flag);
+				GIF.Block.Image_Block.Interlace_Flag = bool((0x40 & temp) >>> 6);
+				//println('Interlace_Flag ' + GIF.Block.Image_Block.Interlace_Flag);
+				GIF.Block.Image_Block.Sort_Flag = bool((0x20 & temp) >>> 5);
+				//println('Sort_Flag ' + GIF.Block.Image_Block.Sort_Flag);
+				GIF.Block.Image_Block.Reserved = (0x18 & temp) >>> 3;
+				//println('Reserved ' + GIF.Block.Image_Block.Reserved);
+				GIF.Block.Image_Block.Size_of_Local_Color_Table = (0x07 & temp);
+				//println('Size_of_Local_Color_Table ' + GIF.Block.Image_Block.Size_of_Local_Color_Table);
+				if(GIF.Block.Image_Block.Local_Color_Table_Flag){
+					temp = Math.pow(2 , (GIF.Block.Image_Block.Size_of_Local_Color_Table + 1)) * 3;
+					//println('Local_Color_Table ' + temp);
+					GIF.Block.Image_Block.Local_Color_Table = buffer.substring(position , position + temp);
+					position += temp;
+				}
+				GIF.Block.Image_Block.LZW_Minimum_Code_Size = buffer.char(position);
+				//println('LZW_Minimum_Code_Size ' + GIF.Block.Image_Block.LZW_Minimum_Code_Size);
+				position += 1;
+				//var im_count = 0;
+				//GIF.Block.Image_Block.Block_Size = new Object;
+				//GIF.Block.Image_Block.Image_Data = new Object;
+				var old_p = position;
+				while(buffer.char(position) != 0x00){
+					//im_count += 1;
+					//GIF.Block.Image_Block.Block_Size[im_count] = buffer.char(position);
+					//position += 1;
+					//println('Block_Size ' + GIF.Block.Image_Block.Block_Size[im_count]);
+					//GIF.Block.Image_Block.Image_Data[im_count] = buffer.substring(position , position + GIF.Block.Image_Block.Block_Size[im_count]);
+					//dump(GIF.Block.Image_Block.Image_Data[im_count]);
+					//position += GIF.Block.Image_Block.Block_Size[im_count];
+					position += buffer.char(position) + 1;
+				}
+				GIF.Block.Image_Block.Image_Data = buffer.substring(old_p , position);
+				GIF.Block.Image_Block.Block_Terminator = buffer.char(position);
+				position += 1;
+				//printfln('Block_Terminator 0x%.2x' , GIF.Block.Image_Block.Block_Terminator);
+				break;
+		}
+		bi++;
+	}
+	return GIF;
+}

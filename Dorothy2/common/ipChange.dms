@@ -1,0 +1,33 @@
+//Dorothy2
+//caption=ipChange
+//version=0.1
+//hint=ip change
+//match=
+//author=xor
+//path=common
+//end
+//wait_time = 待機時間（分）:時間外の時　待機時間より有効時間に成る方が早ければ待機して切替
+function ipChange(wait_time){
+	common_load('modem','l_sleep');
+	var modem_msg = ['ok' , 'エラー' , '致命的なエラー' , '時間外' , '未設定' , '設定エラー'];
+	var modem_time = 0;
+	var ret = modem('test');
+	if(ret == 3){
+		modem_time = modem('time');
+		if(wait_time > modem_time){
+			println(modem_time + ' 分待後にIPを切り替えます');
+			l_sleep(modem_time * 60 * 1000);
+		}
+		else{
+			println('IP切替は時間外の為、行いません');
+			return 3;
+		}
+	}
+	else if(ret != 0){
+		println('IP切替--->' + ret + ' (' + modem_msg(ret) + ')');
+		return ret;
+	}
+	ret = modem();
+	println('IP切替--->' + ret + ' (' + modem_msg(ret) + ')');
+	return ret;
+}

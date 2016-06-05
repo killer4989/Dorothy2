@@ -1,0 +1,381 @@
+/*
+インポートファイル
+caption=汎用？ルーチン
+version=1.000
+hint=
+author=xor
+*/
+//=====================================
+//irvine path
+//=====================================
+class irvinePath{
+	application = new String;
+	option = new String;
+	importz = new String;
+	plugins_all = new String;
+	plugins_user = new String;
+	scripts_all = new String;
+	scripts_user = new String;
+	iemenu_all = new String;
+	iemenu_user = new String;
+
+	scripts = new String;
+	scripts2 = new String;	// \なし
+	queue = new String;
+	queue2 = new String;	// \なし
+
+	function irvinePath(){
+		var reg = new RegIni('\software\wildforce\irvine');
+		application = reg.read('path','application','');
+		option = reg.read('path','option','');
+		importz = reg.read('path','import','');
+		plugins_all = reg.read('path','plugins_all','');
+		plugins_user = reg.read('path','plugins_user','');
+		scripts_all = reg.read('path','scripts_all','');
+		scripts_user = reg.read('path','scripts_user','');
+		iemenu_all = reg.read('path','iemenu_all','');
+		iemenu_user = reg.read('path','iemenu_user','');
+
+		scripts = scripts_all;
+		scripts2 = scripts.slice(0,scripts.lastIndexOf('\'));
+		queue = option.slice(0,option.lastIndexOf('\')) + '\queue\';
+		queue2 = option.slice(0,option.lastIndexOf('\')) + '\queue';
+	}
+}
+
+function scriptUpdate_esc(str){
+	str = str.replace(/\(/g,'\\(');
+	str = str.replace(/\)/g,'\\)');
+	str = str.replace(/\[/g,'\\[');
+	str = str.replace(/\]/g,'\\]');
+	str = str.replace(/\{/g,'\\{');
+	str = str.replace(/\}/g,'\\}');
+	str = str.replace(/\^/g,'\\^');
+	str = str.replace(/\$/g,'\\$');
+	str = str.replace(/\./g,'\\.');
+	str = str.replace(/\+/g,'\\+');
+
+	return str;
+}
+
+function scriptUpdate(scriptName){
+	var count = 0;
+	var f = new String;
+	var ff = new Strings;
+	var irvPath = new irvinePath();
+	var dir = new Directory(irvPath.scripts);
+	f = dir.findFirstFile('*' + scriptName + '*');
+	if(f == null){
+		dir.findClose();
+		return -1;
+	}
+	else{
+		do{
+			if(f.match('^(#*)' + scriptUpdate_esc(scriptName) + '\1$')){
+				count += 1;
+				ff.loadFromFile(irvPath.scripts + f);
+				ff.saveToFile(irvPath.scripts + f);
+			}
+			f = dir.findNextFile();
+		}
+		while (f != null);
+		dir.findClose();
+		if(count == 0){
+			return -1;
+		}
+		return count;
+	}
+}
+//=====================================
+//スクリプト更新２
+//=====================================
+function scriptUpdate2(scriptName){
+	var irvPath = new irvinePath();
+	var f = new File(irvPath.scripts + scriptName);
+	if(f.exists()){
+		var ff = new Strings;
+		ff.loadFromFile(irvPath.scripts + scriptName);
+		ff.saveToFile(irvPath.scripts + scriptName);
+		ff = '';
+	}
+	f = '';
+}
+
+//=====================================
+//スクリプト保存（上書き）
+//=====================================
+function scriptSave(scriptName, srts){
+	var irvPath = new irvinePath();
+	srts.saveToFile(irvPath.scripts + scriptName);
+}
+
+//=====================================
+//スクリプト削除
+//=====================================
+function scriptRemove(scriptName){
+	var irvPath = new irvinePath();
+	var f = new File(irvPath.scripts + scriptName);
+	if(f.exists()){
+		f.remove();
+	}
+	f = '';
+}
+
+//=====================================
+//スクリプトが存在するか？
+//=====================================
+function scriptExists(scriptName){
+	var irvPath = new irvinePath();
+	var f =new File(irvPath.scripts + scriptName);
+	if(f.exists()){
+		f = '';
+		return true;
+	}
+	else{
+		f = '';
+		return false;
+	}
+}
+
+//=====================================
+//xor ini
+//=====================================
+class xorini{
+	var ini= '';
+	function xorini(optiondata){
+		var irvPath = new irvinePath();
+/*
+		//現在のqueueフォルダのpath
+		var currentlyQueue = irvPath.queue2 + changeFilePath(optiondata.CurrentQueue);
+		//現在のqueueフォルダが存在しない時は新しく作る
+		var d =  new Directory(currentlyQueue);
+		if(! d.exists())
+			d.make();
+		//xor.iniを探してコピーする
+		var dd = xoriniFind(currentlyQueue);
+		var s = new Strings;
+		if(dd != null){
+			s.loadFromFile(dd + '\xor.ini');
+			s.saveToFile(currentlyQueue + '\xor.ini');
+		}
+		//
+		ini = new Ini(currentlyQueue + '\xor.ini');
+*/
+		ini = new Ini(extractFilePath(irvPath.application) + '\xor.ini');
+	}
+	function write(t, k, v){
+		return ini.write(t, k, v);
+	}
+	function read(t, k, v){
+		return ini.read(t, k, v);
+	}
+	function deleteKey(t, k){
+		return ini.deleteKey(t, k);
+	}
+	function updete(){
+		return ini.update();
+	}
+}
+
+function xoriniFind(str){
+	//xor.iniがあるフォルダを探す
+	var dir = new Directory(str);
+	if(dir.findFirstDir('Default') != null){
+		dir.findClose();
+		return null;
+	}
+	else{
+		dir.findClose();
+	}
+	if(dir.findFirstFile('xor.ini') == null){
+		dir.findClose();
+		str = dir.excludePathDelimiter();
+		str = str.slice(0,str.lastIndexOf('\'));
+		str = xoriniFind(str);
+	}
+	else{
+		dir.findClose();
+	}
+	return str;
+}
+
+function xoriniFilenameWrite(url, filename, optiondata){
+	var mutex = new Mutex('xorini');
+	mutex.lock();
+	var ini = new xorini(optiondata);
+	ini.write('filename', url.replace(/=/g,'_'), filename);
+	ini.updete();
+	mutex.unlock();
+}
+
+//=============================================================
+//ファイル名の重複をチェックする処理を追加
+//=============================================================
+function xoriniFilenameWrite2(url, filename, folder){
+	if(folder.DupFile == false){
+		var f = new File(folder.Folder + '\' + filename);
+		if(f.exists()){
+			println('ファイル名が重複しています。');
+			f = '';
+			exit();
+		}
+		f = '';
+	}
+	var mutex = new Mutex('xorini');
+	mutex.lock();
+	var ini = new xorini(' ');
+	ini.write('filename', url.replace(/=/g,'_'), filename);
+	ini.updete();
+	mutex.unlock();
+}
+
+function xoriniFilenameRead(url, optiondata){
+	var ret = new String;
+	var url2 = new String;
+	var mutex = new Mutex('xorini');
+	mutex.lock();
+	var ini = new xorini(optiondata);
+	url2 = url.replace(/=/g,'_');
+	ret = ini.read('filename', url2, '');
+	ini.deleteKey('filename', url2);
+	ini.updete();
+	mutex.unlock();
+	return ret;
+}
+
+function rename(filename, newFilename){
+	//filename path付き
+	//newFilename 名前のみ
+	var f = new File(filename);
+	if(!f.exists()){
+		return 'ファイルが有りません';
+	}
+	var numb = 0;
+	var extNum = '';
+	var e = 'ok';
+	var newDir = '';
+	if(newFilename != ''){
+		if(newFilename.match(/\[\[md=(.+?)\]\]/)){
+			newDir = RegExp.$1;
+			var oldDir = extractFilePath(filename);
+			newFilename = newFilename.replace(/\[\[md=.+?\]\]/g, '');
+			var d = new Directory(oldDir + '\' + newDir);
+			if(!d.exists()){
+				d.make();
+			}
+		}
+		if(newFilename.match(/\[\[cd=(.+?)\]\]/)){
+			newDir = RegExp.$1;
+			var oldDir = extractFilePath(filename);
+			newFilename = newFilename.replace(/\[\[cd=.+?\]\]/g, '');
+			var d = new Directory(oldDir + '\' + newDir);
+			if(!d.exists()){
+				newDir = '';
+			}
+		}
+		if(newFilename.lastIndexOf('.')){
+			var nf1 = joint('\' , extractFilePath(filename) , newDir , newFilename.slice(0, newFilename.lastIndexOf('.')));
+			var nf2 = newFilename.slice(newFilename.lastIndexOf('.'), newFilename.length);
+		}
+		else{
+			var nf1 = extractFilePath(filename) + '\' + newFilename;
+			var nf2 = '';
+		}
+		do{
+			try {
+				f.renameTo(nf1 + extNum + nf2);
+				e = 'ok';
+			}
+			catch(e) {
+				numb += 1;
+				extNum = '(' + numb + ')';
+			}
+			if(numb > 1000){
+				break;
+			}
+		}
+		while(e == 'EFileError');
+	}
+	return f.filename;
+}
+
+function changeFileName(filename){
+	filename = filename.replace(/&nbsp;/g," ");
+	filename = filename.replace(/&#34;|&quot;/g,"\"");
+	filename = filename.replace(/&#38;|&amp;/g,"&");
+	filename = filename.replace(/&#60;|&lt;/g,"<");
+	filename = filename.replace(/&#62;|&gt;/g,">");
+	filename = filename.replace(/&#128;|&euro;/g,"_");
+	filename = filename.replace(/&#137;|&permil;/g,"‰");
+	filename = filename.replace(/&#132;/g,"_");
+	filename = filename.replace(/&#133;/g,"…");
+	filename = filename.replace(/&#134;/g,"†");
+	filename = filename.replace(/&#135;/g,"‡");
+	filename = filename.replace(/&#139;/g,"_");
+	filename = filename.replace(/&#155;/g,"_");
+	filename = filename.replace(/&#171;/g,"≪");
+	filename = filename.replace(/&#187;/g,"≫");
+	filename = filename.replace(/&#149;/g,"_");
+	filename = filename.replace(/&#153;|&trade;/g,"TM");
+	filename = filename.replace(/&#161;|&iexcl;/g,"!");
+	filename = filename.replace(/&#162;|&cent;/g,"￠");
+	filename = filename.replace(/&#163;|&pound;/g,"￡");
+	filename = filename.replace(/&#164;|&curren;/g,"_");
+	filename = filename.replace(/&#165;|&yen;/g,"\\");
+	filename = filename.replace(/&#166;|&brvbar;/g,"|");
+	filename = filename.replace(/&#167;|&sect;/g,"§");
+	filename = filename.replace(/&#168;|&uml;/g,"¨");
+	filename = filename.replace(/&#169;|&copy;/g,"c");
+	filename = filename.replace(/&#170;|&ordf;/g,"a");
+	filename = filename.replace(/&#174;|&reg;/g,"R");
+	filename = filename.replace(/&#176;|&deg;/g,"°");
+	filename = filename.replace(/&#181;|&micro;/g,"μ");
+	filename = filename.replace(/&#182;|&para;/g,"¶");
+	filename = filename.replace(/&#8539;/g,"1/8");
+	filename = filename.replace(/&#188;|&frac14;/g,"1/4");
+	filename = filename.replace(/&#8540;/g,"3/8");
+	filename = filename.replace(/&#189;|&frac12;/g,"1/2");
+	filename = filename.replace(/&#8541;/g,"5/8");
+	filename = filename.replace(/&#190;|&frac34;/g,"3/4");
+	filename = filename.replace(/&#8542;/g,"7/8");
+	filename = filename.replace(/&#191;|&iquest;/g,"_");
+	filename = filename.replace(/&#171;|&laquo;/g,"≪");
+	filename = filename.replace(/&#187;|&raquo;/g,"≫");
+
+	filename = filename.replace(/&ldquo;/g,"“");
+	filename = filename.replace(/&rdquo;/g,"”");
+
+	filename =filename.replace(/\\/g,"￥");
+	filename =filename.replace(/\//g,"／");
+	filename =filename.replace(/\:/g,"：");
+	filename =filename.replace(/\,/g,"，");
+	filename =filename.replace(/\;/g,"；");
+	filename =filename.replace(/\*/g,"＊");
+	filename =filename.replace(/\?/g,"？");
+	filename =filename.replace(/\"/g,"”");
+	filename =filename.replace(/\</g,"＜");
+	filename =filename.replace(/\>/g,"＞");
+	filename =filename.replace(/\|/g,"｜");
+	return filename;
+}
+
+function extractFilePath(filename){
+	return filename.slice(0,filename.lastIndexOf('\'));
+}
+function changeFilePath(filename){
+	filename =filename.replace(/\//g,"\\");
+	return filename;
+}
+function joint(j){
+	var ans = '';
+	var i;
+	for(i = 1 ; i < arguments.length ; i++){
+		if(ans == '' || arguments[i] == ''){
+			ans += arguments[i];
+		}
+		else{
+			ans += j + arguments[i];
+		}
+	}
+	return ans;
+}

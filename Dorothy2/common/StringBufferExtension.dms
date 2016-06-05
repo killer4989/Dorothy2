@@ -1,0 +1,75 @@
+//Dorothy2
+//caption=StringBufferExtension
+//version=1.02
+//hint=StringBufferExtension
+//match=
+//author=xor
+//path=common
+//end
+/*
+	s = new StringBuffer;
+	s.append(100);
+	s.append(110);
+	println(s.char(0));	//100
+	println(s.int(0));	//2816000
+*/
+
+StringBuffer.prototype.char = function(i){
+	return this.substring(i , i + 1).charCodeAt(0);
+},
+
+StringBuffer.prototype.int = function(i){
+	return this.substring(i , i + 1).charCodeAt(0) + this.substring(i + 1 , i + 2).charCodeAt(0) * 256;
+},
+
+StringBuffer.prototype.byte = function(i){
+	return this.charCodeAt(i);
+},
+
+StringBuffer.prototype.word = function(i){
+	return this.charCodeAt(i) + this.charCodeAt(i + 1) * 256;
+},
+
+StringBuffer.prototype.dword = function(i){
+	return this.charCodeAt(i) + this.charCodeAt(i + 1) * 256 + this.charCodeAt(i + 2) * 256 * 256 + this.charCodeAt(i + 3) * 256 * 256 * 256;
+},
+
+StringBuffer.prototype.unit8 = function(i){
+	return this.charCodeAt(i);
+},
+
+StringBuffer.prototype.unit16 = function(i){
+	return this.charCodeAt(i) + this.charCodeAt(i + 1) * 256;
+},
+
+StringBuffer.prototype.unit24 = function(i){
+	return this.charCodeAt(i) + this.charCodeAt(i + 1) * 256 + this.charCodeAt(i + 2) * 256 * 256;
+},
+
+StringBuffer.prototype.unit32 = function(i){
+	return this.charCodeAt(i) + this.charCodeAt(i + 1) * 256 + this.charCodeAt(i + 2) * 256 * 256 + this.charCodeAt(i + 3) * 256 * 256 * 256;
+},
+
+StringBuffer.prototype.unit16_be = function(i){
+	return this.charCodeAt(i) * 256 + this.charCodeAt(i + 1);
+},
+
+StringBuffer.prototype.unit24_be = function(i){
+	return this.charCodeAt(i) * 256 * 256 + this.charCodeAt(i + 1) * 256 + this.charCodeAt(i + 2);
+},
+
+StringBuffer.prototype.unit32_be = function(i){
+	return this.charCodeAt(i) * 256 * 256 * 256 + this.charCodeAt(i + 1) * 256 * 256 + this.charCodeAt(i + 2) * 256 + this.charCodeAt(i + 3);
+},
+
+StringBuffer.prototype.bit = function(i , bit){
+	var v =  this.substring(i , i + 1).charCodeAt(0);
+	if(bit == 0){
+		return 0;
+	}
+	while(!(bit & 1)){
+		bit = bit >>> 1;
+		v = v >>> 1;
+	}
+	return v & bit;
+}

@@ -1,0 +1,43 @@
+//Dorothy2
+//caption=HTML
+//version=1.0
+//hint=test
+//match=
+//author=xor
+//path=common\HTML
+//end
+/*
+html = new HTML(source);
+if(html.forms.length > 0){
+	println(html.forms[0].form.ACTION);
+	println(html.forms[0].inputs[0].input.TYPE);
+	println(html.forms[0].inputs_type('HIDDEN'));
+}
+*/
+function HTML(source){
+	var forms = source.match(/<\s*form\s*.*?<\s*\/\s*form\s*>/gi);
+	var i,j;
+	this.forms_id = HTML_forms_id;
+	this.forms_name = HTML_forms_name;
+	this.forms_class = HTML_forms_class;
+	this.forms = [];
+	if(forms == null){
+		forms = [];
+	}
+	for(i in forms){
+		this.forms.add = forms[i];
+		this.forms[i] = new Object;
+		this.forms[i].inputs_type = HTML_inputs_type;
+		this.forms[i].inputs_name = HTML_inputs_name;
+		this.forms[i].innerHTML = forms[i];
+		this.forms[i].form = new HTML_form(forms[i].match(/<.*?>/));
+		var inputs = forms[i].match(/<\s*input\s*.*?>/gi);
+		if(inputs == null) inputs = [];
+		this.forms[i].inputs = [];
+		for(j in inputs){
+			this.forms[i].inputs.add = '';
+			this.forms[i].inputs[j] = new Object;
+			this.forms[i].inputs[j].input = new HTML_input(inputs[j]);
+		}
+	}
+}

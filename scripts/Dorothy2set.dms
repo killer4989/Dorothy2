@@ -1,0 +1,1663 @@
+/*
+スクリプト初期化データ
+guid={6E6322BB-0F97-4E02-84FC-B1CC00E983BB}
+caption=動画ダウンロード２設定
+version=0.12
+hint=
+event=OnMainMenuClick
+match=
+author=xor
+synchronize=0
+*/
+
+
+F = "
+object Form1: TForm1
+  Left = 437
+  Top = 228
+  Width = 738
+  Height = 619
+  Caption = '動画ダウンロード２設定'
+  Color = clBtnFace
+  DragMode = dmAutomatic
+  Font.Charset = SHIFTJIS_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'ＭＳ Ｐゴシック'
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = False
+  Position = poScreenCenter
+  ShowHint = True
+  DesignSize = (
+    730
+    573)
+  PixelsPerInch = 96
+  TextHeight = 12
+  object ListView1: TListView
+    Left = 0
+    Top = 0
+    Width = 729
+    Height = 553
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    Checkboxes = True
+    Columns = <
+      item
+        Caption = 'キャプション'
+        Width = 200
+      end
+      item
+        Caption = '優先度'
+      end
+      item
+        Caption = 'バージョン'
+        Width = 70
+      end
+      item
+        Caption = '作者'
+        Width = 70
+      end
+      item
+        AutoSize = True
+        Caption = '説明'
+      end>
+    ReadOnly = True
+    RowSelect = True
+    PopupMenu = PopupMenu1
+    TabOrder = 0
+    ViewStyle = vsReport
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 554
+    Width = 730
+    Height = 19
+    AutoHint = True
+    Panels = <>
+    ParentShowHint = False
+    ShowHint = True
+    SimplePanel = True
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 104
+    Top = 104
+    object Edit1: TMenuItem
+      Caption = '編集'
+    end
+    object N18: TMenuItem
+      Caption = '設定'
+    end
+    object N1: TMenuItem
+      Caption = 'ドキュメント'
+    end
+    object N2: TMenuItem
+      Caption = 'プロジェクト'
+    end
+  end
+  object MainMenu1: TMainMenu
+    Left = 16
+    object File1: TMenuItem
+      Caption = 'ファイル(&F)'
+      object New1: TMenuItem
+        Caption = '新規作成(&N)'
+      end
+      object N22: TMenuItem
+        Caption = 'ドキュメント作成'
+        Enabled = False
+      end
+      object script1: TMenuItem
+        Caption = '設定用script作成'
+        Enabled = False
+      end
+      object script2: TMenuItem
+        Caption = 'その他のscript作成'
+      end
+      object Open1: TMenuItem
+        Caption = '開く(&O)...'
+        Enabled = False
+        Hint = '選択アイテムをエディタで開く|fd;adkfj;alkjf;'
+      end
+      object N23: TMenuItem
+        Caption = 'ドキュメントを開く'
+        Enabled = False
+      end
+      object script3: TMenuItem
+        Caption = '設定用scriptを開く'
+        Enabled = False
+      end
+      object script4: TMenuItem
+        Caption = 'その他のscriptを開く'
+      end
+      object N25: TMenuItem
+        Caption = '-'
+      end
+      object iniSave: TMenuItem
+        Caption = '設定保存'
+      end
+      object iniLoad: TMenuItem
+        Caption = '設定読込み'
+      end
+      object N26: TMenuItem
+        Caption = '-'
+      end
+      object N27: TMenuItem
+        Caption = 'クローン'
+      end
+      object N24: TMenuItem
+        Caption = '-'
+      end
+      object Save1: TMenuItem
+        Caption = '上書き保存(&S)'
+      end
+      object N5: TMenuItem
+        Caption = '-'
+      end
+      object N17: TMenuItem
+        Caption = '保存して終了'
+      end
+      object Exit1: TMenuItem
+        Caption = '終了(&X)'
+      end
+    end
+    object Edit2: TMenuItem
+      Caption = '編集(&E)'
+      object N4: TMenuItem
+        Caption = '全て選択'
+      end
+      object N6: TMenuItem
+        Caption = '全て解除'
+      end
+      object N20: TMenuItem
+        Caption = '優先度を変える'
+        Enabled = False
+      end
+      object N21: TMenuItem
+        Caption = 'データを再読込み'
+      end
+      object N7: TMenuItem
+        Caption = '-'
+      end
+      object N8: TMenuItem
+        Caption = 'デバッグモード'
+        Checked = True
+      end
+    end
+    object pu1: TMenuItem
+      Caption = 'プロジェクト'
+      object pro1: TMenuItem
+        Caption = 'プロジェクト新規作成'
+      end
+      object pro2: TMenuItem
+        Caption = 'プロジェクト編集'
+      end
+      object pro3: TMenuItem
+        Caption = 'プロジェクトファイル出力'
+      end
+    end
+    object N3: TMenuItem
+      Caption = '設定'
+    end
+    object N11: TMenuItem
+      Caption = 'パッケージ'
+      Enabled = False
+    end
+    object tool1: TMenuItem
+      Caption = 'ツール'
+      Enabled = False
+    end
+    object Help1: TMenuItem
+      Caption = 'ヘルプ'
+      object N16: TMenuItem
+        Caption = 'バージョン'
+      end
+      object doc: TMenuItem
+        Caption = 'ドキュメント'
+      end
+    end
+  end
+end
+";
+
+
+
+
+D = "
+object Form4: TForm4
+  Left = 227
+  Top = 142
+  Width = 618
+  Height = 479
+  Caption = 'Form4'
+  Color = clBtnFace
+  Font.Charset = SHIFTJIS_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'ＭＳ Ｐゴシック'
+  Font.Style = []
+  OldCreateOrder = False
+  DesignSize = (
+    610
+    452)
+  PixelsPerInch = 96
+  TextHeight = 12
+  object Memo1: TMemo
+    Left = 0
+    Top = 0
+    Width = 609
+    Height = 449
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    Font.Charset = SHIFTJIS_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'ＭＳ Ｐゴシック'
+    Font.Style = []
+    Lines.Strings = (
+      'Memo1')
+    ParentFont = False
+    ScrollBars = ssBoth
+    TabOrder = 0
+  end
+end
+";
+
+
+//========================
+//設定用フォーム
+//========================
+class SettingForm(VCLForm){
+	//var ColumnToSort = 0;
+	//-------------------
+	//コンストラクタ
+	//-------------------
+	function SettingForm(){
+		loadFromText(F);
+		//ListView1.onColumnClick = ListView1sort;
+		//ListView1.onCompare = ListView1Compare;
+		//PopupMenu1.onPopup = doc;
+
+		setting_ini();
+		ListView1.acceptDrop = true;
+		menu_new_set();
+		menu_setting_set();
+		edit_set();
+		debug_set();
+		ini_save_set();
+		ini_load_set();
+		clone_set();
+		tool_set();
+		set_set();
+		package_set();
+		ListView1.onSelectItem = selectItem;	//アイテム選択
+		N18.onClick = setting;			//設定
+		script3.onClick = edit_setting;		//設定編集
+		N1.onClick = doc2;			//ドキュメント
+		N16.onClick = ver_dsp;			//ヘルプ-バージョン情報
+		doc.onClick = help_doc;			//ヘルプ-ドキュメント
+		N8.onClick =debug_mode;			//デバッグモード
+		ListView1.onDragDropFiles = DD;		//ファイルＤ＆Ｄ
+		ListView1.onDragDropText = DDurl;	//テキストＤ＆Ｄ
+		N4.onClick = edit_allset;		//全て選択
+		N6.onClick = edit_allreset;		//全て解除
+		Open1.onClick = file_edit;		//プログラム編集
+		Edit1.onClick = file_edit;		//プログラム編集
+		Exit1.onClick = exit1;			//終了
+		Save1.onClick = save1;			//上書き保存
+		N17.onClick = exit2;			//保存して終了
+		pro1.onClick = project_new;		//プロジェクト新規作成
+		pro2.onClick = project_edit;		//プロジェクト編集
+		pro3.onClick = project_out;		//プロジェクトファイル出力
+		N23.onClick = edit_doc;			//ドキュメント編集
+		N22.onClick = new_doc;			//ドキュメント作成
+		script4.onClick = etc_edit;		//その他のscriptを開く
+		N21.onClick = reload;			//データを再読込み
+		//iniSave.onClick = ini_save;		//設定保存
+		//iniLoad.onClick = ini_load;		//設定読込み
+		//onHint = msg2;
+	}
+	//=========================================================================================
+	//setting ini
+	//=========================================================================================
+	function setting_ini(){
+		var ini = new Ini(dorothy2_system + 'setting.ini');
+		USER_NAME = ini.read('user' , 'name' , '');
+		COMPRESSION = ini.read('arc' , 'compression' , '');
+		EXTRACT = ini.read('arc' , 'extract' , '');
+		var sf = (ini.read('window' , 'sizeflg' , '0') == '1');
+		if(sf){
+			Width = ini.read('window' , 'width' , Width);
+			Height = ini.read('window' , 'height' , Height);
+		}
+		var pf = (ini.read('window' , 'positionflg' , '0') == '1');
+		if(pf){
+			Position = 'poDesigned';
+			Left = ini.read('window' , 'left' , Left);
+			Top = ini.read('window' , 'top' , Top);
+		}
+	}
+	//=========================================================================================
+	//パッケージ
+	//=========================================================================================
+	/*
+	package files is dorothy2_system_menu_package + *.dms
+		tool file format
+			header
+				//Dorothy2
+				//caption=
+				//version=
+				//hint=
+				//author=
+				//path=system\menu\package
+				//end
+			body
+				function(){}
+	*/
+	//=================================================
+	//パッケージをセット
+	//=================================================
+	function package_set(){
+		var dir = new Directory(dorothy2_system_menu_package);
+		if(!dir.exists()){
+			return;
+		}
+		N11.Enabled = false;
+		menu_package = new Object;
+		var filename = dir.findFirstFile('*.dms');
+		while(filename != null){
+			if(filename.indexOf('.dms#') != -1){
+				filename = dir.findNextFile();
+				continue;
+			}
+			N11.Enabled = true;
+			var hd = script_file_read(dir.path + filename);
+			filename = filename.slice(0, filename.lastIndexOf('.'));
+			menu_package[filename] = new VCLMenuItem;
+			menu_package[filename].Caption = hd.caption;
+			menu_package[filename].Hint = hd.hint;
+			menu_package[filename].filename = filename;
+			N11.add(menu_package[filename]);
+			menu_package[filename].onClick = package_load;
+			filename = dir.findNextFile();
+		}
+	}
+	//=================================================
+	//パッケージをロード実行
+	//=================================================
+	function package_load(menuItem){
+		var file = new File(dorothy2_system_menu_package + menuItem.filename + '.dms');
+		if(!file.exists){
+			alert('ツールが見つからない');
+			return;
+		}
+		var p = file_load(file);
+		eval(p)();
+	}
+	//=========================================================================================
+	//設定
+	//=========================================================================================
+	/*
+	set files is dorothy2_system_menu_set + *.dms
+		tool file format
+			header
+				//Dorothy2
+				//caption=
+				//version=
+				//hint=
+				//author=
+				//path=system\menu\set
+				//end
+			body
+				function(){}
+	*/
+	//=================================================
+	//設定をセット
+	//=================================================
+	function set_set(){
+		var dir = new Directory(dorothy2_system_menu_set);
+		if(!dir.exists()){
+			return;
+		}
+		N3.Enabled = false;
+		menu_set = new Object;
+		var filename = dir.findFirstFile('*.dms');
+		while(filename != null){
+			if(filename.indexOf('.dms#') != -1){
+				filename = dir.findNextFile();
+				continue;
+			}
+			N3.Enabled = true;
+			var hd = script_file_read(dir.path + filename);
+			filename = filename.slice(0, filename.lastIndexOf('.'));
+			menu_set[filename] = new VCLMenuItem;
+			menu_set[filename].Caption = hd.caption;
+			menu_set[filename].Hint = hd.hint;
+			menu_set[filename].filename = filename;
+			N3.add(menu_set[filename]);
+			menu_set[filename].onClick = set_load;
+			filename = dir.findNextFile();
+		}
+	}
+	//=================================================
+	//設定をロード実行
+	//=================================================
+	function set_load(menuItem){
+		var file = new File(dorothy2_system_menu_set + menuItem.filename + '.dms');
+		if(!file.exists){
+			alert('ツールが見つからない');
+			return;
+		}
+		var p = file_load(file);
+		eval(p)();
+	}
+	//=========================================================================================
+	//tool
+	//=========================================================================================
+	/*
+	tool files is dorothy2_system_menu_tool + *.dms
+		tool file format
+			header
+				//Dorothy2
+				//caption=
+				//version=
+				//hint=
+				//author=
+				//path=tool
+				//end
+			body
+				function(){}
+	*/
+	//=================================================
+	//ツールをセット
+	//=================================================
+	function tool_set(){
+		var dir = new Directory(dorothy2_system_menu_tool);
+		if(!dir.exists()){
+			return;
+		}
+		tool1.Enabled = false;
+		menu_tool = new Object;
+		var filename = dir.findFirstFile('*.dms');
+		while(filename != null){
+			if(filename.indexOf('.dms#') != -1){
+				filename = dir.findNextFile();
+				continue;
+			}
+			tool1.Enabled = true;
+			var hd = script_file_read(dir.path + filename);
+			filename = filename.slice(0, filename.lastIndexOf('.'));
+			menu_tool[filename] = new VCLMenuItem;
+			menu_tool[filename].Caption = hd.caption;
+			menu_tool[filename].Hint = hd.hint;
+			menu_tool[filename].filename = filename;
+			tool1.add(menu_tool[filename]);
+			menu_tool[filename].onClick = tool_load;
+			filename = dir.findNextFile();
+		}
+	}
+	//=================================================
+	//ツールをロード実行
+	//=================================================
+	function tool_load(menuItem){
+		var file = new File(dorothy2_system_menu_tool + menuItem.filename + '.dms');
+		if(!file.exists){
+			alert('ツールが見つからない');
+			return;
+		}
+		var p = file_load(file);
+		eval(p)();
+	}
+	//=========================================================================================
+	//clone
+	//=========================================================================================
+	/*
+	clone file is dorothy2_system + 'clone.dat'
+		recode is
+			file name
+			TAB
+			caption
+			TAB
+			guid
+			CR
+	*/
+	
+	//=================================================
+	//クローンをセット
+	//=================================================
+	function clone_set(){
+		var dir = new Directory(dorothy2_system);
+		if(!dir.exists()){
+			return;
+		}
+		clone = new Object;
+
+		var filename = 'new_clone';
+		clone[filename] = new VCLMenuItem;
+		clone[filename].Caption = '新規';
+		clone[filename].Hint = '';
+		clone[filename].filename = filename;
+		N27.add(clone[filename]);
+		clone[filename].onClick = clone_save;
+
+		var file = new File(dorothy2_system + 'clone.dat');
+		if(!file.exists()){
+			return;
+		}
+		file.open('r');
+		var s = new Strings(file.read());
+		var i;
+		for(i in s){
+			var v = s[i].split('\t');
+			var filename = v[0];
+			var caption = v[1];
+			var guid = v[2];
+			clone[filename] = new VCLMenuItem;
+			clone[filename].Caption = caption;
+			clone[filename].Hint = '';
+			clone[filename].filename = filename;
+			clone[filename].GUID = guid;
+			N27.add(clone[filename]);
+			clone[filename].onClick = clone_save;
+		}
+	}
+
+	//=======================================
+	//クローン
+	//=======================================
+	function clone_save(menuItem){
+		msg('クローン保存中');
+		if(menuItem.filename == 'new_clone'){
+			//新規保存ファイル名入力
+			var file = Dialog.saveFile('クローン新規保存', irvine_script_path + '*.dms');
+			if(file == null){
+				msg('中止');
+				return;
+			}
+			if(file.indexOf('new_clone') != -1){
+				alert('その名前は使えません。');
+				msg('中止');
+				return;
+			}
+			if(new File(file).exists()){
+				alert('その名前は既に使われています。');
+				msg('中止');
+				return;
+			}
+
+			//キャプションを入力
+			var frm = new VCLForm(true);
+			frm.loadFromFile(dorothy2_system + 'caption.dfm');
+			//frm.OKBtn.onClick = function(){
+			//	alert('ok');
+			//};
+			//frm.CancelBtn.onClick = function(){
+			//	alert('cancel');
+			//};
+			var clone_status = frm.showModal();
+			if(clone_status == 2){
+				msg('中止');
+				return;
+			}
+			var clone_caption = frm.Edit1.Text;
+			if(clone_caption == ''){
+				msg('中止');
+				return;
+			}
+
+			//GUID生成
+			var TypeLib = WScript.CreateObject("Scriptlet.TypeLib");
+			var clone_GUID = TypeLib.Guid;
+
+			//clone.dat に追加
+			var name = new File(file).extractName();
+			name = name.slice(0 , name.lastIndexOf('.'));
+			var fn = dorothy2_system + 'clone.dat';
+			var f = new File(fn);
+			if(f.exists()){
+				var s = new Strings;
+				s.loadFromFile(fn);
+				s.add(name + "\t" + clone_caption + "\t" + clone_GUID);
+				s.saveToFile(fn);
+			}
+			else{
+				var s = new Strings;
+				s.add(name + "\t" + clone_caption + "\t" + clone_GUID);
+				s.saveToFile(fn);
+			}
+		}
+		else{
+			var file = irvine_script_path + menuItem.filename + '.dms';
+			var dat = file_load(file);
+			if(dat == false){
+				alert("file:"+file + 'が見つかりません。');
+				return;
+			}
+			var header = dat.match(/\/\*.+?\*\//);
+			if(header == ''){
+				alert(file + 'の中身が異常');
+				return;
+			}
+			if(!header[0].match(/guid=(\{.+?\})/)){
+				alert(file + 'の中身が異常');
+				return;
+			}
+			var s_GUID = RegExp.$1;
+			
+			if(!header[0].match(/caption=(.*?)\n/)){
+				alert(file + 'の中身が異常');
+				return;
+			}
+			var s_caption = RegExp.$1;
+
+			var clone_GUID = menuItem.GUID;
+			if(s_GUID != clone_GUID){
+				alert('GUID が一致しません');
+				return;
+			}
+			var clone_caption = s_caption;
+
+		}
+		//ここまでで取得した物
+		//file = script path
+		//clone_caption
+		//clone_GUID
+
+		//クローンを保存
+		//Dorothy2A を読込む
+		var D2A = new Object;
+		D2A.path = irvine_script_path + 'Dorothy2A.dms';
+		D2A.file = new File(D2A.path);
+		if(!D2A.file.exists()){
+			alert('Dorothy2A.dms が見つからない');
+			return;
+		}
+		try{
+			D2A.file.open('r');
+			D2A.data = D2A.file.read();
+			D2A.file.close();
+		}
+		catch(e){
+			alert(e + ' Dorothy2A.dms 読込み失敗');
+			return;
+		}
+		//クローン用にdata を書換える
+		var modify_s = '//{68CA0FCF-C14E-45BC-B130-A8C8D94CE189}';
+		var modify_e = '//{1484567B-B377-4865-BDF3-4219DD113590}';
+		//header部分を取り出す
+		D2A.header = D2A.data.slice(0 , D2A.data.indexOf('*/') + 4);
+		//body部分を取り出す
+		D2A.body = D2A.data.slice(D2A.data.indexOf(modify_e) + modify_e.length + 2 , D2A.data.length);
+		//headerを書換え
+		//versionを取得
+		if(D2A.header.match(/version=(.*?$)/m)){
+			D2A.h_varsion = RegExp.$1;
+		}
+		else{
+			D2A.h_varsion = 'version=';
+		}
+		var s = new Strings;
+		s.add('/*');
+		s.add('スクリプト初期化データ');
+		s.add('guid=' + clone_GUID);
+		s.add('caption=' + clone_caption);
+		s.add('version=' + D2A.h_varsion);
+		s.add('hint=動画ダウンロード２Ａクローン');
+		s.add('event=OnHttpRequest');
+		s.add('match=');
+		s.add('author=Dorothy2');
+		s.add('synchronize=0');
+		s.add('*/');
+
+		//Dorothy設定を書き込む
+		var i;
+		s.add(modify_s);
+		for(i in mode){
+			var checked = mode[i];
+			var mode_name = i;
+			s.add(mode_name + ' = ' + checked + ';');
+		}
+		s.add('Dorothy = new Object;');
+		var t = 'Dorothy.matchList = [ ';
+		var so = new Array;
+		for(i in ListView1.Items){
+			if(ListView1.Items[i].Checked){
+				var filename = ListView1.Items[i].filename;
+				var priority = ListView1.Items[i].priority;
+				var hd = script_file_read(dorothy2_program + filename + '.dms');
+				so.add([priority , filename , esc(hd.match)]);
+				//t += '["' + esc(hd.match) + '"' + ",'" + filename + "'],";
+			}
+		}
+		so.sort(priority_func);
+		for(i in so){
+			t += '["' + so[i][2] + '"' + ",'" + so[i][1] + "'],";
+		}
+		t = t.slice(0 , t.length - 1) + '];';
+		s.add(t);
+		s.add("Dorothy.programDir = '" + dorothy2_program + "';");
+		s.add("Dorothy.path = '" + dorothy2_path + "';");
+		s.add("Dorothy.temp = '" + dorothy2_temp + "';");
+		s.add("Dorothy.version = '" + D2A.h_varsion + "';");
+		s.add(modify_e);
+
+		D2A.header = s.text;
+		D2A.data = D2A.header + D2A.body;
+
+		//fileに書き込む
+		var f = new File(file);
+		if(f.exists()){
+			f.remove();
+		}
+		try{
+			f.open('w');
+			f.write(D2A.data);
+			f.close();
+		}
+		catch(e){
+			alert(e + ' クローン書き込み失敗');
+			return;
+		}
+		msg(file + '　に保存しました。');
+	}
+	//=========================================================================================
+	//ini file
+	//=========================================================================================
+	/*
+	original is dorothy2_system + 'Dorothy.ini'
+	ini files is dorothy2_system_ini + '*.ini'
+	*/
+	//=================================================
+	//設定読込みをセット
+	//=================================================
+	function ini_load_set(){
+		var dir = new Directory(dorothy2_system_ini);
+		if(!dir.exists()){
+			return;
+		}
+		ini_load_file = new Object;
+
+		var filename = dir.findFirstFile('*.ini');
+		while(filename != null){
+			if(filename.indexOf('Dorothy.ini') != -1){
+				filename = dir.findNextFile();
+				continue;
+			}
+			//var hd = script_file_read(dir.path + filename);
+			filename = filename.slice(0, filename.lastIndexOf('.'));
+			ini_load_file[filename] = new VCLMenuItem;
+			ini_load_file[filename].Caption = filename;
+			ini_load_file[filename].Hint = '';
+			ini_load_file[filename].filename = filename;
+			iniLoad.add(ini_load_file[filename]);
+			ini_load_file[filename].onClick = ini_load;
+			filename = dir.findNextFile();
+		}
+	}
+	//=======================================
+	//設定読込み
+	//=======================================
+	function ini_load(menuItem){
+		msg('設定読込み中');
+		var file = dorothy2_system_ini + menuItem.filename + '.ini';
+		
+		//ini から読込み
+		var i;
+		var ini = new Ini(file);
+		var section = 'script';
+		for(i in ListView1.Items){
+			var filename = ListView1.Items[i].filename + '.dms';
+			var checked = ini.read(section , filename , '0');
+			ListView1.Items[i].Checked = (checked == 1)? true:false;
+		}
+
+		var section = 'mode';
+		var ini_debug = ini.read(section , 'debug' , '0');
+		N8.Checked = (ini_debug == '1')? true:false;
+		mode.debug = N8.Checked;
+		for(i in mode){
+			if(i != 'debug'){
+				if(menu_edit.hasKey(i)){
+					var mode_name = i;
+					var checked = ini.read(section , mode_name , '0');
+					mode[i] =  (checked == 1)? true:false;
+					menu_edit[i].Checked = mode[i];
+				}
+				else{
+					mode.removeKey(i);
+				}
+			}
+		}
+		msg(file + ' を読込みました。');
+	}
+	//=================================================
+	//設定保存をセット
+	//=================================================
+	function ini_save_set(){
+		var dir = new Directory(dorothy2_system_ini);
+		if(!dir.exists()){
+			return;
+		}
+		ini_save_file = new Object;
+
+		var filename = 'new_ini';
+		ini_save_file[filename] = new VCLMenuItem;
+		ini_save_file[filename].Caption = '新規';
+		ini_save_file[filename].Hint = '';
+		ini_save_file[filename].filename = filename;
+		iniSave.add(ini_save_file[filename]);
+		ini_save_file[filename].onClick = ini_save;
+
+		var filename = dir.findFirstFile('*.ini');
+		while(filename != null){
+			if(filename.indexOf('Dorothy.ini') != -1){
+				filename = dir.findNextFile();
+				continue;
+			}
+			//var hd = script_file_read(dir.path + filename);
+			filename = filename.slice(0, filename.lastIndexOf('.'));
+			ini_save_file[filename] = new VCLMenuItem;
+			ini_save_file[filename].Caption = filename;
+			ini_save_file[filename].Hint = '';
+			ini_save_file[filename].filename = filename;
+			iniSave.add(ini_save_file[filename]);
+			ini_save_file[filename].onClick = ini_save;
+			filename = dir.findNextFile();
+		}
+	}
+	//=======================================
+	//設定保存
+	//=======================================
+	function ini_save(menuItem){
+		msg('設定保存中');
+		if(menuItem.filename == 'new_ini'){
+			var file = Dialog.saveFile('新規設定保存', dorothy2_system_ini + '*.ini');
+			if(file == null){
+				msg('中止');
+				return;
+			}
+			if(file.indexOf('new_ini') != -1){
+				alert('その名前は使えません。');
+				msg('中止');
+				return;
+			}
+		}
+		else{
+			var file = dorothy2_system_ini + menuItem.filename + '.ini';
+		}
+		//ini に書き込む
+		var i;
+		var ini = new Ini(file);
+		var section = 'script';
+		ini.eraseSection(section);
+		for(i in ListView1.Items){
+			var checked = (ListView1.Items[i].Checked)? '1':'0';
+			var filename = ListView1.Items[i].filename + '.dms';
+			ini.write(section , filename , checked);
+		}
+		var section = 'mode';
+		ini.eraseSection(section);
+		for(i in mode){
+			var checked = (mode[i])? '1':'0';
+			var mode_name = i;
+			ini.write(section , mode_name , checked);
+		}
+		ini.update();
+		ini_save_set();
+		ini_load_set();
+		msg(file + '　に保存しました。');
+	}
+	//=========================================================================================
+	//project
+	//=========================================================================================
+	//=======================================
+	//プロジェクト新規作成
+	//=======================================
+	function project_new(){
+		var path = dorothy2_system_menu_project + 'new_project.dms';
+		var p = file_load(path);
+		eval(p)();
+	}
+	//=======================================
+	//プロジェクト編集
+	//=======================================
+	function project_edit(){
+		var path = dorothy2_system_menu_project + 'edit_project.dms';
+		var p = file_load(path);
+		eval(p)();
+	}
+	//=======================================
+	//プロジェクトファイル出力
+	//=======================================
+	function project_out(){
+		var path = dorothy2_system_menu_project + 'out_project.dms';
+		var p = file_load(path);
+		eval(p)();
+	}
+
+
+	//=========================================================================================
+
+	//=======================================
+	//設定
+	//=======================================
+	function setting(){
+		var path = dorothy2_setting + ListView1.Items[ListView1.Selected.Index].filename + '.set';
+		var p = file_load(path);
+		eval(p)();
+	}
+	//=======================================
+	//アイテム選択
+	//=======================================
+	function selectItem(){
+		if(ListView1.SelCount == 0){
+			Edit1.Enabled = false;
+			N18.Enabled = false;
+			N1.Enabled = false;
+			N2.Enabled = false;
+			N22.Enabled = false;
+			script1.Enabled = false;
+			Open1.Enabled = false;
+			N23.Enabled = false;
+			script3.Enabled = false;
+			return;
+		}
+		Edit1.Enabled = true;
+		Open1.Enabled = true;
+		var path = dorothy2_setting + ListView1.Items[ListView1.Selected.Index].filename + '.set';
+		N18.Enabled = new File(path).exists();
+		var path = dorothy2_document + 'program\' + ListView1.Items[ListView1.Selected.Index].filename + '.txt';
+		N1.Enabled = new File(path).exists();
+		N2.Enabled = true;
+		N22.Enabled = !N1.Enabled;
+		script1.Enabled = !N18.Enabled;
+		N23.Enabled = N1.Enabled;
+		script3.Enabled = N18.Enabled;
+	}
+	//=======================================
+	//上書き保存
+	//=======================================
+	function save1(){
+		msg('保存中');
+		//ini に書き込む
+		var i;
+		var ini = new Ini(dorothy2_path + 'system\Dorothy.ini');
+		var section = 'script';
+		ini.eraseSection(section);
+		for(i in ListView1.Items){
+			var checked = (ListView1.Items[i].Checked)? '1':'0';
+			var filename = ListView1.Items[i].filename + '.dms';
+			ini.write(section , filename , checked);
+		}
+		var section = 'mode';
+		ini.eraseSection(section);
+		for(i in mode){
+			var checked = (mode[i])? '1':'0';
+			var mode_name = i;
+			ini.write(section , mode_name , checked);
+		}
+		ini.update();
+		//Dorothy2A を書換え
+		var i;
+		var modify_s = '//{68CA0FCF-C14E-45BC-B130-A8C8D94CE189}';
+		var modify_e = '//{1484567B-B377-4865-BDF3-4219DD113590}';
+		var s = new Strings;
+		s.add(modify_s);
+		for(i in mode){
+			var checked = mode[i];
+			var mode_name = i;
+			s.add(mode_name + ' = ' + checked + ';');
+		}
+		s.add('Dorothy = new Object;');
+		var t = 'Dorothy.matchList = [ ';
+		var so = new Array;
+		for(i in ListView1.Items){
+			if(ListView1.Items[i].Checked){
+				var filename = ListView1.Items[i].filename;
+				var priority = ListView1.Items[i].priority;
+				var hd = script_file_read(dorothy2_program + filename + '.dms');
+				so.add([priority , filename , esc(hd.match)]);
+				//t += '["' + esc(hd.match) + '"' + ",'" + filename + "'],";
+			}
+		}
+		so.sort(priority_func);
+		for(i in so){
+			t += '["' + so[i][2] + '"' + ",'" + so[i][1] + "'],";
+		}
+		t = t.slice(0 , t.length - 1) + '];';
+		s.add(t);
+		s.add("Dorothy.programDir = '" + dorothy2_program + "';");
+		s.add("Dorothy.path = '" + dorothy2_path + "';");
+		s.add("Dorothy.temp = '" + dorothy2_temp + "';");
+		t = '';
+		var ts,te,t2;
+		var irv_script_path = new irvinePath.scripts;
+		var file = new File(irv_script_path + 'Dorothy2A.dms');
+		if(!file.exists()){
+			alert('Dorothy2A.dms が在りません');
+			exit();
+		}
+		try{
+			file.open('r');
+			t = file.read();
+			t.match(/version=(.*?)$/m);
+			s.add("Dorothy.version = '" + RegExp.$1 + "';");
+			s.add(modify_e);
+			file.remove();
+			file.close();
+			ts = t.indexOf(modify_s);
+			te = t.indexOf(modify_e) + modify_e.length;
+			t2 = t.slice(0 , ts);
+			t2 += s.text.slice(0 , s.text.length - 2);
+			t2 += t.slice(te , t.length);
+			file.open('w');
+			file.write(t2);
+		}
+		catch(e){
+			alert(e + '-Dorothy2A.dms の書換えに失敗しました。');
+		}
+		finally{
+			file.close();
+		}
+		msg('保存終了');
+	}
+	//=======================================
+	//スクリプトの優先順にソート
+	//=======================================
+	function priority_func(a , b){
+		if(a[0] < b[0]){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	//=======================================
+	//保存して終了
+	//=======================================
+	function exit2(){
+		save1();
+		exit1();
+	}
+	//=======================================
+	//終了
+	//=======================================
+	function exit1(){
+		msg('終了');
+		close();
+	}
+	//=======================================
+	//データを再読込み
+	//=======================================
+	function reload(){
+		msg('リロード');
+		program_dir_read();
+	}
+	//=======================================
+	//プログラム編集
+	//=======================================
+	function file_edit(){
+		msg('編集');
+		if(ListView1.SelCount == 0){
+			return;
+		}
+		var path = dorothy2_program + ListView1.Items[ListView1.Selected.Index].filename + '.dms';
+		editor(path);
+	}
+	//=======================================
+	//ドキュメント作成
+	//=======================================
+	function new_doc(){
+		msg('ドキュメント作成');
+		if(ListView1.SelCount == 0){
+			return;
+		}
+		var path = dorothy2_document + 'program\' + ListView1.Items[ListView1.Selected.Index].filename + '.txt';
+		var f = new File(path);
+		if(f.exists()){
+			alert('既にファイルが存在しています！？');
+			return;
+		}
+		try{
+			f.open('w');
+		}
+		catch(e){
+			alert(e);
+		}
+		finally{
+			f.close();
+			f = '';
+		}
+		editor(path);
+		selectItem();
+	}
+	//=======================================
+	//ドキュメント編集
+	//=======================================
+	function edit_doc(){
+		msg('ドキュメント編集');
+		if(ListView1.SelCount == 0){
+			return;
+		}
+		var path = dorothy2_document + 'program\' + ListView1.Items[ListView1.Selected.Index].filename + '.txt';
+		editor(path);
+	}
+	//=======================================
+	//その他のscriptを開く
+	//=======================================
+	function etc_edit(){
+		msg('その他のscriptを開く');
+		var path = Dialog.openFile('その他のscriptを開く',　dorothy2_system_menu + '*.*');
+		if(path == null){
+			return;
+		}
+		editor(path);
+	}
+	//===========================================================
+	//Dorothy\system\menu\settingから設定メニューをセット
+	//===========================================================
+	function menu_setting_set(){
+		var dir = new Directory(dorothy2_system_menu_setting);
+		if(!dir.exists()){
+			return;
+		}
+		menu_setting = new Object;
+		var filename = dir.findFirstFile('*.dms');
+		while(filename != null){
+			if(filename.indexOf('.dms#') != -1){
+				filename = dir.findNextFile();
+				continue;
+			}
+			var hd = script_file_read(dir.path + filename);
+			filename = filename.slice(0, filename.lastIndexOf('.'));
+			menu_setting[filename] = new VCLMenuItem;
+			menu_setting[filename].Caption = hd.caption;
+			menu_setting[filename].Hint = hd.hint;
+			menu_setting[filename].filename = filename;
+			script1.add(menu_setting[filename]);
+			menu_setting[filename].onClick = menu_setting_load;
+			filename = dir.findNextFile();
+		}
+	}
+	//===========================================================
+	//Dorothy\system\menu\settingから設定メニューをロード実行
+	//===========================================================
+	function menu_setting_load(menuItem){
+		msg('設定用script作成');
+		if(ListView1.SelCount == 0){
+			return;
+		}
+		var path = dorothy2_program + ListView1.Items[ListView1.Selected.Index].filename + '.dms';
+		var header = script_file_read(path);
+		var file = new File(dorothy2_system_menu_setting + menuItem.filename + '.dms');
+		if(!file.exists){
+			alert('メニューが見つからない');
+			return;
+		}
+		var p = file_load(file);
+		eval(p)(header);
+		selectItem();
+	}
+	//=======================================
+	//設定用script編集
+	//=======================================
+	function edit_setting(){
+		msg('設定用script編集');
+		if(ListView1.SelCount == 0){
+			return;
+		}
+		var path = dorothy2_setting + ListView1.Items[ListView1.Selected.Index].filename + '.set';
+		editor(path);
+	}
+	//=======================================
+	//全て選択
+	//=======================================
+	function edit_allset(){
+		msg('全て選択');
+		var i;
+		for(i in ListView1.Items){
+			ListView1.Items[i].Checked = true;
+		}
+	}
+	//=======================================
+	//全て解除
+	//=======================================
+	function edit_allreset(){
+		msg('全て解除');
+		var i;
+		for(i in ListView1.Items){
+			ListView1.Items[i].Checked = false;
+		}
+	}
+	//=======================================
+	//ファイルＤ＆Ｄ
+	//=======================================
+	function DD(sender,x,y,files){
+		msg(files);
+		var path = dorothy2_system + 'DDfile.dms';
+		var p = file_load(path);
+		eval(p)(files);
+	}
+	//=======================================
+	//テキストＤ＆Ｄ
+	//=======================================
+	function DDurl(sender,x,y,url){
+		msg(url);
+		var path = dorothy2_system + 'DDtext.dms';
+		var p = file_load(path);
+		eval(p)(url);
+	}
+	//=======================================
+	//ドキュメント
+	//=======================================
+	function doc2(){
+		if(ListView1.SelCount == 0){
+			return;
+		}
+		doc_dsp(ListView1.Items[ListView1.Selected.Index].filename);
+	}
+	//=======================================
+	//デバッグモード
+	//=======================================
+	function debug_mode(){
+		N8.Checked = !N8.Checked;
+		mode.debug = N8.Checked;
+	}
+	//=======================================
+	//デバッグモードをセット
+	//=======================================
+	function debug_set(){
+		var ini = new Ini(dorothy2_system + 'Dorothy.ini');
+		var section = 'mode';
+		var ini_debug = ini.read(section , 'debug' , '0');
+		if(ini_debug == '1'){
+			N8.Checked = true;
+		}
+		else{
+			N8.Checked =false;
+		}
+		mode.debug = N8.Checked;
+	}
+	//=================================================
+	//Dorothy\system\menu\editからメニューをセット
+	//=================================================
+	function edit_set(){
+		var ini = new Ini(dorothy2_system + 'Dorothy.ini');
+		var section = 'mode';
+		var keys = ini.readSection(section);
+		var i;
+		for(i in keys){
+			var value = ini.read(section , keys[i] , '0') == '1';
+			mode[keys[i]] = value;
+		}
+		
+		var dir = new Directory(dorothy2_system_menu_edit);
+		if(!dir.exists()){
+			return;
+		}
+		menu_edit = Object;
+		var name_list = Object;
+		var filename = dir.findFirstFile('*.dms');
+		while(filename != null){
+			if(filename.indexOf('.dms#') != -1){
+				filename = dir.findNextFile();
+				continue;
+			}
+			var hd = script_file_read(dir.path + filename);
+			filename = filename.slice(0, filename.lastIndexOf('.'));
+			name_list[filename] = '1';
+			menu_edit[filename] = new VCLMenuItem;
+			menu_edit[filename].Caption = hd.caption;
+			menu_edit[filename].Hint = hd.hint;
+			menu_edit[filename].Checked = ini.read(section , filename , '0') == '1';
+			menu_edit[filename].filename = filename;
+			Edit2.add(menu_edit[filename]);
+			menu_edit[filename].onClick = menu_edit_load;
+			filename = dir.findNextFile();
+		}
+		for(i in keys){
+			if(!name_list.hasKey([keys[i]])){
+				mode.removeKey([keys[i]]);
+			}
+		}
+	}
+	//=================================================
+	//Dorothy\system\menu\editからメニューをロード実行
+	//=================================================
+	function menu_edit_load(menuItem){
+		var file = new File(dorothy2_system_menu_edit + menuItem.filename + '.dms');
+		if(!file.exists){
+			alert('メニューが見つからない');
+			return;
+		}
+		var p = file_load(file);
+		eval(p)();
+	}
+	//=================================================
+	//Dorothy\system\menu\newからメニューをセット
+	//=================================================
+	function menu_new_set(){
+		var dir = new Directory(dorothy2_system_menu_new);
+		if(!dir.exists()){
+			return;
+		}
+		menu_new = new Object;
+		var filename = dir.findFirstFile('*.dms');
+		while(filename != null){
+			if(filename.indexOf('.dms#') != -1){
+				filename = dir.findNextFile();
+				continue;
+			}
+			var hd = script_file_read(dir.path + filename);
+			filename = filename.slice(0, filename.lastIndexOf('.'));
+			menu_new[filename] = new VCLMenuItem;
+			menu_new[filename].Caption = hd.caption;
+			menu_new[filename].Hint = hd.hint;
+			menu_new[filename].filename = filename;
+			New1.add(menu_new[filename]);
+			menu_new[filename].onClick = menu_new_load;
+			filename = dir.findNextFile();
+		}
+	}
+	//=================================================
+	//Dorothy\system\menu\newからメニューをロード実行
+	//=================================================
+	function menu_new_load(menuItem){
+		var file = new File(dorothy2_system_menu_new + menuItem.filename + '.dms');
+		if(!file.exists){
+			alert('メニューが見つからない');
+			return;
+		}
+		var p = file_load(file);
+		eval(p)();
+	}
+	//=================================================
+	//ステータスバーメッセージ
+	//=================================================
+	function msg(text){
+		StatusBar1.SimpleText = text;
+	}
+	//=================================================
+	//ステータスバーメッセージ2
+	//=================================================
+	function msg2(SBobj){
+		var i,s;
+		for(i in SBobj){
+			s = s + i + '=' + SBobj[i] + " \n";
+		}
+		alert(StatusBar1.Hint);
+		//StatusBar1.SimpleText = text;
+	}
+	//=================================================
+	//バージョン情報
+	//=================================================
+	function ver_dsp(){
+		var path = dorothy2_system_menu_help + 'ver.dms';
+		var p = file_load(path);
+		eval(p)();
+	}
+	//=================================================
+	//ドキュメント
+	//=================================================
+	function help_doc(){
+		var path = dorothy2_system_menu_help + 'doc.dms';
+		var p = file_load(path);
+		eval(p)();
+	}
+}
+//========================
+//設定用フォーム
+//========================
+class docForm(VCLForm){
+	//var ColumnToSort = 0;
+	//-------------------
+	//コンストラクタ
+	//-------------------
+	function docForm(){
+		loadFromText(D);
+		//this.show();
+	}
+}
+//===========================
+//
+//===========================
+class newForm(VCLForm){
+	//--------------------
+	//コンストラクタ
+	//--------------------
+	function newForm(){
+		newFormDfm = file_load(dorothy2_system + 'Unit5.dfm');
+		loadFromText(newFormDfm);
+		var a = ListView1.Items.add();
+		a.Caption = '標準';
+	}
+}
+//===========================
+//ドキュメント
+//===========================
+function doc_dsp(name){
+	var f = new docForm;
+	var path = dorothy2_document + 'program\' + name + '.txt';
+	var d = file_load(path);
+	f.Memo1.Lines.assign(d);
+	f.Caption = name;
+	f.showModal();
+}
+//===========================
+//new
+//===========================
+function new_file(){
+	var p = file_load(dorothy2_system + 'new\new_def.dms');
+	eval(p)();
+}
+
+//=========================================================
+//Dorothy\program からファイルを順番に読込む
+//=========================================================
+function program_dir_read(){
+	var dir = new Directory(dorothy2_program);
+	if(!dir.exists()){
+		alert('初期設定を行ってください');
+		exit();
+	}
+	var ini = new Ini(dorothy2_system + 'Dorothy.ini');
+	var section = 'script';
+	
+	var filename = dir.findFirstFile('*.dms');
+	form.ListView1.Items.clear();
+	while(filename != null){
+		if(filename.indexOf('.dms#') != -1){
+			filename = dir.findNextFile();
+			continue;
+		}
+		var hd = script_file_read(dir.path + filename);
+		var checked = ini.read(section , filename ,'0');
+		filename = filename.slice(0, filename.lastIndexOf('.'));
+		var a = form.ListView1.Items.add();
+		a.Checked = (checked == 1);
+		a.Caption = hd.caption;
+		a.filename = filename;
+		a.priority = hd.priority;
+		a.SubItems.add(hd.priority);
+		a.SubItems.add(hd.version);
+		a.SubItems.add(hd.author);
+		a.SubItems.add(hd.hint);
+
+		filename = dir.findNextFile();
+	}
+}
+
+//Dorothy.ini からスクリプトの設定を読込む
+function script_ini_read(){
+	var path = dorothy2_path + 'system\Dorothy.ini';
+	var ini =  new Ini(path);
+	var scr = ini.readSection('script');
+	var i;
+	var ans = new Strings;
+	var caption,chk,author,version,hint;
+	var get;
+	for(i in scr){
+		chk = ini.read('script' , scr[i] , '0');
+		get = script_file_read(scr[i]);
+		var a = form.ListView1.Items.add();
+		a.Caption = get.caption;
+		a.SubItems.add(get.version);
+		a.SubItems.add(get.author);
+		a.SubItems.add(get.hint);
+	}
+}
+//=========================================================
+//プログラムファイルのヘッダを取込む
+//=========================================================
+function script_file_read(filename){
+	var ans = new Object;
+	ans.caption = '';
+	ans.author = '';
+	ans.version = '';
+	ans.hint = '';
+	ans.match = '';
+	ans.priority = '';
+	ans.editor = '';
+	ans.path = '';
+	ans.filename = '';
+
+	var path = filename;
+	var f = new File(path);
+	if(!f.exists()){
+		return ans;
+	}
+	ans.filename = f.extractName();
+	ans.filename = ans.filename.slice(0,ans.filename.lastIndexOf('.'));
+	try{
+		f.open('r');
+		var data = f.read();
+		f.close();
+	}
+	catch(e){
+		alert('file open error ' + path);
+		exit();
+	}
+	if(!data.match(/^\/\/Dorothy2$(.+?)^\/\/end$/m)){
+		return ans;
+	}
+	var programHead = RegExp.$1;
+	if(programHead.match(/^\/\/author=(.*?)$/m)){
+		ans.author = RegExp.$1;
+	}
+	if(programHead.match(/^\/\/caption=(.*?)$/m)){
+		ans.caption = RegExp.$1;
+	}
+	if(programHead.match(/^\/\/version=(.*?)$/m)){
+		ans.version = RegExp.$1;
+	}
+	if(programHead.match(/^\/\/hint=(.*?)$/m)){
+		ans.hint = RegExp.$1;
+	}
+	if(programHead.match(/^\/\/match=(.*?)$/m)){
+		ans.match = RegExp.$1;
+	}
+	if(programHead.match(/^\/\/priority=(.*?)$/m)){
+		ans.priority = RegExp.$1;
+	}
+	if(programHead.match(/^\/\/editor=(.*?)$/m)){
+		ans.editor = RegExp.$1;
+	}
+	return ans;
+}
+//===============================================
+//file load
+//===============================================
+function file_load(path){
+	var file = new File(path);
+	var f = true;
+	try{
+		file.open('r');
+		var data = file.read();
+		file.close();
+		file = '';
+	}
+	catch(e){
+		alert(e + ' ' +  path);
+		f = false;
+	}
+	return data;
+}
+//===============================================
+//
+//===============================================
+function common_load(){
+	var i;
+	for(i = 0 ; i < arguments.length ; i++){
+		eval( file_load(dorothy2_common + arguments[i] + '.dms') );
+	}
+}
+
+//=========================================================
+//エディタで編集
+//=========================================================
+function editor(path){
+	if(!new File(path).exists()){
+		alert('ファイルが在りません');
+		return;
+	}
+	var editor_name = Irvine.GetOptionData('general' ,'editor');
+	if(editor_name == ''){
+		editor_name = 'notepad.exe';
+	}
+	editor_name = 'C:\\Program Files\\Hidemaru\\Hidemaru.exe';
+	//run
+	Win32.shellExecute('open' , '"' + editor_name + '"' ,  '"' + path + '"');
+	return;
+}
+//=========================================================
+function esc(s){
+	var e;
+	try{
+		s = s.replace(/\\/g,'\\\\');
+		s = s.replace(/\"/g,'\\\"');
+		s = s.replace(/\n/g,'\\n');
+		s = s.replace(/\t/g,'\\t');
+	}
+	catch(e) {
+		return s;
+	}
+
+	return s;
+}
+//=========================================================
+function OnMainMenuClick(irvine,action){
+//メインメニューのクリックイベント
+	Irvine = irvine;
+	Action = action;
+	var ivp 			= new irvinePath;
+	dorothy2_path 			= extractFilePath(ivp.application) + '\Dorothy2\';
+	dorothy2_temp 			= dorothy2_path + 'temp\';
+	dorothy2_document 		= dorothy2_path + 'document\';
+	dorothy2_common 		= dorothy2_path + 'common\';
+	dorothy2_program 		= dorothy2_path + 'program\';
+	dorothy2_setting 		= dorothy2_path + 'setting\';
+	dorothy2_system 		= dorothy2_path + 'system\';
+	dorothy2_project 		= dorothy2_path + 'project\';
+	dorothy2_projectdata 		= dorothy2_path + 'projectdata\';
+	dorothy2_bin 			= dorothy2_path + 'bin\';
+	dorothy2_system_menu 		= dorothy2_system + 'menu\';
+	dorothy2_system_menu_new 	= dorothy2_system_menu + 'new\';
+	dorothy2_system_menu_setting 	= dorothy2_system_menu + 'setting\';
+	dorothy2_system_menu_edit 	= dorothy2_system_menu + 'edit\';
+	dorothy2_system_menu_project 	= dorothy2_system_menu + 'project\';
+	dorothy2_system_menu_tool 	= dorothy2_system_menu + 'tool\';
+	dorothy2_system_menu_set 	= dorothy2_system_menu + 'set\';
+	dorothy2_system_menu_package	= dorothy2_system_menu + 'package\';
+	dorothy2_system_menu_help 	= dorothy2_system_menu + 'help\';
+	dorothy2_system_ini 		= dorothy2_system + 'ini\';
+	irvine_script_path 		= ivp.scripts;
+
+	mode = new Object;
+
+	form = new SettingForm(true);
+	program_dir_read();
+	form.showModal();
+}
+
+function OnMenuUpdate(irvine,action){
+//メニューの更新イベント
+
+}
+import xor.*;

@@ -1,0 +1,221 @@
+//Dorothy2
+//caption=出力
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=system\menu\project
+//end
+function(){
+	var line = function(n){
+		var l = '--------------------------------------------------------------------------';
+		return l.slice(0,n);
+	};
+	var space = function(s , n){
+		var ss = new String(s);
+		var l = '                                                                          ';
+		return ss + l.slice(ss.sizeOf() , n);
+	};
+	var spaceR = function(s , n){
+		var ss = new String(s);
+		var l = '                                                                          ';
+		return l.slice(ss.sizeOf() , n) + ss;
+	};
+
+	//プロジェクトファイルからファイルリストを取り出す
+	var pro2list = function(pf){
+		var i , j , k , d , f ,dir , ii , jj;
+		var out = [];
+		for(i in pf.data){
+			if(pf.data[i].type == 'file'){
+				for(j in pf.data[i].Addition){
+					out.add(pf.data[i].Addition[j]);
+				}
+			}
+			else if(pf.data[i].type == 'folder'){
+				var out2 = [];
+				d = pf.data[i].dir;
+				for(j in pf.data[i].Addition){
+					f = pf.data[i].Addition[j];
+					dir = new Directory(dorothy2_path + d);
+					var fn = dir.findFirstFile(f);
+					while(fn != null){
+						out2.add(d + '\' + fn);
+						fn = dir.findNextFile();
+					}
+				}
+				if(pf.data[i].hasKey('kill')){
+					for(j in pf.data[i].kill){
+						f = pf.data[i].kill[j];
+						dir = new Directory(dorothy2_path + d);
+						var fn = dir.findFirstFile(f);
+						while(fn != null){
+							var fn2 = d + '\' + fn;
+							for(jj = out2.length - 1 ; jj >= 0 ; jj--){
+								if(out2[jj] == fn2){
+									out2.delete(jj);
+								}
+							}
+							fn = dir.findNextFile();
+						}
+					}
+				}
+				out = out.concat(out2);
+			}
+		}
+		return out;
+	};
+
+	//プロジェクトファイルを収集
+	var out = [];
+	var caps = [];
+	var fcount = [];
+	var proVer = [];
+	var c_size = 4;
+	var v_size = 4;
+	var dir = new Directory(dorothy2_project);
+	var dirName = dir.findFirstDir('*');
+	while(dirName != null){
+		var dir1 = new  Directory(dorothy2_project + dirName);
+		var fileName = dir1.findFirstFile('*.d2p');
+		while(fileName != null){
+			
+			var file = new File(dorothy2_project + dirName + '\' + fileName);
+			try{
+				file.open('r');
+				var data = file.read();
+				var pFile = eval(data);
+				caps.add(pFile.head.caption);
+				proVer.add(pFile.head.version);
+				out.add(dorothy2_project + dirName + '\' + fileName);
+				//fcount.add(pFile.data[0].Addition.length);
+				fcount.add(pro2list(pFile).length);
+			}
+			catch(e){
+				alert(e);
+			}
+			finally{
+				file.close();
+			}
+			fileName = dir1.findNextFile();
+		}
+		dir1.findClose();
+		dirName = dir.findNextDir();
+	}
+	dir.findClose();
+
+	//ファイル選択
+	var cb = new CheckListBox;
+	cb.items.assign(caps);
+	if(!cb.execute('出力ファイルを選択','プロジェクトファイル')){
+		return;
+	}
+	var readme = new Strings;
+	var i;
+	for(i = 0 ; i < cb.count ; i++){
+		if(cb.getChecked(i)){
+			if(c_size < caps[i].sizeOf() ){
+				c_size = caps[i].sizeOf();
+			}
+			var head = script_file_read(dorothy2_path + proVer[i]);
+			if(v_size < head.version.sizeOf()){
+				v_size = head.version.sizeOf();
+			}
+		}
+	}
+	var day = new Date();
+	day.format = 'yyyy/mm/dd';
+	readme.add(space('name' , c_size) + ' ' + space('ver',v_size) + ' files release');
+	readme.add(line(c_size)  + ' ' + line(v_size) + ' ' + line(5) + ' ' + line(10));
+	for(i = 0 ; i < cb.count ; i++){
+		if(cb.getChecked(i)){
+			var profile = out[i];
+			var head = script_file_read(dorothy2_path + proVer[i]);
+			readme.add(space(caps[i],c_size+1) + space(head.version,v_size+1) + spaceR(fcount[i],5) + ' ' + day);
+		}
+	}
+	readme.add(line(c_size + v_size + 18));
+	//alert(readme);
+
+	//ファイル出力
+	day.format = 'yymmdd';
+	var saveDir = dorothy2_projectdata + 'dorothy2_'  + USER_NAME + '_' + day;
+	var dd = saveDir;
+	var c = 0;
+	while(new Directory(dd).exists()){
+		dd = saveDir + '_' + ++c;
+	}
+	saveDir = dd;
+
+	for(i = 0 ; i < cb.count ; i++){
+		if(cb.getChecked(i)){
+			var profile = out[i];
+			var head = script_file_read(dorothy2_path + proVer[i]);
+			readme.add('');
+			readme.add('');
+			readme.add('');
+			readme.add(caps[i]);
+			readme.add(line(60));
+			var f = new File(out[i]);
+			var error = false;
+			try{
+				f.open('r');
+				var data = f.read();
+			}
+			catch(e){
+				alert(e);
+				error = true;
+			}
+			finally{
+				f.close();
+			}
+			if(error){
+				return;
+			}
+
+			pFile = eval(data);
+			readme.add(pFile.head.memo.replace(/^(.)/mg , '  $1'));
+			readme.add(line(60));
+			
+			data.match(/^\[file\]\n(.*)/m);
+			var fs = new Strings(RegExp.$1);
+			var ii;
+			var pp = pro2list(pFile);
+			for(ii in pp){
+				readme.add(pp[ii].replace(/^(.)/mg , '    $1'));
+				var path = saveDir + '\Dorothy2\' + pp[ii].slice(0 , pp[ii].lastIndexOf('\'));
+				dir = new Directory(path);
+				if(!dir.exists()){
+					dir.make();
+				}
+				var ff = new File(dorothy2_path + pp[ii]);
+				ff.copyTo(saveDir + '\Dorothy2\' + pp[ii]);
+				dir = null;
+			}
+			readme.add(line(60));
+		}
+	}
+
+
+	//readme.txt
+	day.format = 'yymmdd';
+	var d = new Directory(saveDir);
+	if(!d.exists()){
+		d.make();
+	}
+	var f = new File(saveDir + '\readme.txt');
+	try{
+		if(f.exists()){
+			f.remove();
+		}
+		f.open('w');
+		f.write(readme);
+	}
+	catch(e){
+		alert(e);
+	}
+	finally{
+		f.close();
+	}
+	d = null;
+}

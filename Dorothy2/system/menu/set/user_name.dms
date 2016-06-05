@@ -1,0 +1,28 @@
+//Dorothy2
+//caption=ÉÜÅ[ÉUÅ[ñº
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=system\menu\set
+//end
+function(){
+	var frm = new VCLForm(true);
+
+	frm.loadFromFile(dorothy2_system_menu_set + 'user_name.dfm');
+
+	frm.ini = new Ini(dorothy2_system + 'setting.ini');
+	frm.Edit1.Text = frm.ini.read('user' , 'name' , '');
+
+	frm.CancelBtn.onClick = function(){
+		frm.close();
+	};
+	frm.OKBtn.onClick = function(){
+		USER_NAME = frm.Edit1.Text;
+		frm.ini.write('user' , 'name' , frm.Edit1.Text);
+		frm.ini.update();
+	};
+	frm.showModal();
+	//eventLoop();
+
+}

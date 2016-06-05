@@ -1,0 +1,89 @@
+//Dorothy2
+//caption=ドキュメント
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=system\menu\help
+//end
+function(){
+	help_doc_frm = new VCLForm(true);
+
+	help_doc_frm.loadFromFile(dorothy2_system_menu_help + 'doc.dfm');
+
+
+	var doclist = function(dirs ,node){
+		var dir = new Directory(dirs);
+		if(!dir.exists()){
+			alert('フォルダが無い');
+			return;
+		}
+		var names = new Strings();
+		var names_path = new Strings();
+		var fName = dir.findFirstFile('*');
+		while(fName != null){
+			var fn = fName.slice(0,fName.lastIndexOf('.'));
+			if(dir.directories.indexOf(dirs + fn) == -1){
+				if(node == null){
+					var a = help_doc_frm.TreeView1.Items.add(node,fn);
+				}
+				else{
+					var a = help_doc_frm.TreeView1.Items.addChild(node,fn);
+				}
+				a.type = 'file';
+				a.path = dirs + fName;
+			}
+			else{
+				names.add(fn);
+				names_path.add(dirs + fName);
+			}
+			fName = dir.findNextFile();
+		}
+
+		var fName = dir.findFirstDir('*');
+		while(fName != null){
+			if(fName == '.' || fName == '..'){
+				fName = dir.findNextDir();
+				continue;
+			}
+			if(node == null){
+				var a = help_doc_frm.TreeView1.Items.add(node,fName);
+			}
+			else{
+				var a = help_doc_frm.TreeView1.Items.addChild(node,fName);
+			}
+			a.type = 'folder';
+			a.path = dirs + fName;
+			if(names.indexOf(fName) != -1){
+				a.fpath = names_path(names.indexOf(fName));
+			}
+			else{
+				a.fpath = null;
+			}
+			doclist(dirs + fName + '\' ,a);
+			fName = dir.findNextDir();
+		}
+	};
+	doclist(dorothy2_document , null);
+
+	help_doc_frm.TreeView1.onChange	 = function(Sender , Node){
+		if(Node.type == 'file'){
+			var t = file_load(Node.path);//dorothy2_document + Node.Text);
+			help_doc_frm.Memo1.Lines.assign(t);
+		}
+		else if(Node.type == 'folder'){
+			if(Node.fpath != null){
+				var t = file_load(Node.fpath);
+				help_doc_frm.Memo1.Lines.assign(t);
+			}
+		}
+	};
+
+	help_doc_frm.onClose = function(){
+		help_doc_frm = null;
+	};
+
+	help_doc_frm.show();
+	eventLoop();
+
+}

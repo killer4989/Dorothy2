@@ -1,0 +1,44 @@
+//Dorothy2
+//caption=saveFolder
+//version=1.01
+//hint=保存フォルダを求めます
+//match=
+//author=xor
+//path=common
+//end
+//フォルダ設定が相対パスなら(irvine)\settings\(user)\queue\queue.ini のfolder からの相対位置
+//アイテム設定が相対パスならフォルダ設定からの相対位置
+function saveFolder(){
+	//フォルダ設定
+	var fpath = folderdata.Folder;
+	var flg = true;
+	if(fpath.length < 2){
+		flg = false;
+	}
+	else if(fpath[1] != ':'){
+		flg = false;
+	}
+	if(!flg){
+		var ivp = new irvinePath;
+		var ini = new Ini(ivp.queue + 'queue.ini');
+		fpath = ini.read('queue' , 'folder' , '') + fpath;
+	}
+	//アイテム設定
+	var ipath = item.folder;
+	if(ipath == ''){
+		return fpath;
+	}
+	flg = true;
+	if(ipath.length < 2){
+		flg = false;
+	}
+	else if(ipath[1] != ':'){
+		flg = false;
+	}
+	if(flg){
+		return ipath;
+	}
+	else{
+		return fpath + '\' + ipath;
+	}
+}

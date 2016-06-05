@@ -1,0 +1,25 @@
+//Dorothy2
+//caption=bit
+//version=1.0
+//hint=bit('1100 1100') 2i•¶š‚ğ®”‚É•ÏŠ·
+//match=
+//author=xor
+//path=common
+//end
+function bit(s){
+	var i;
+	var a = 0;
+	for(i = 0 ; i < s.length ; ++i){
+		if(s[i] == ' '){
+			continue;
+		}
+		if(s[i] == '0' || s[i] == '1'){
+			a = a << 1;
+			a += parseInt(s[i]);
+		}
+		else{
+			return false;
+		}
+	}
+	return a;
+}

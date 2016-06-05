@@ -1,0 +1,36 @@
+//Dorothy2
+//caption=SHA-1
+//version=1.0
+//hint=sha1.dll
+//match=
+//author=xor
+//path=common
+//end
+function sha1(){
+	this.dll = new DynaCall;
+	this.dll.register(Dorothy.path + 'bin\sha1.dll','CreateAlgorithm','f=s','r=h');
+	this.dll.register(Dorothy.path + 'bin\sha1.dll','InitAlgorithm','i=h','f=s','r=u');
+	this.dll.register(Dorothy.path + 'bin\sha1.dll','InputData','i=hsl','f=s','r=u');
+	this.dll.register(Dorothy.path + 'bin\sha1.dll','GetHashLength','i=h','f=s','r=t');
+	this.dll.register(Dorothy.path + 'bin\sha1.dll','GetHash','i=hsl','f=s','r=u');
+	this.dll.register(Dorothy.path + 'bin\sha1.dll','GetHashTextLength','i=h','f=s','r=u');
+	this.dll.register(Dorothy.path + 'bin\sha1.dll','GetHashText','i=hsl','f=s','r=u');
+	this.hashText = new StringBuffer(255);
+	this.htl = 40;
+	this.handle = this.dll.CreateAlgorithm();
+}
+,
+sha1.prototype.init = function(){
+	return this.dll.InitAlgorithm(this.handle);
+}
+,
+sha1.prototype.inputData = function(data){
+	return this.dll.InputData(this.handle , data , data.length);
+}
+,
+sha1.prototype.getHashText = function(){
+	if(this.dll.GetHashText(this.handle , this.hashText ,this.htl ) == 0){
+		return this.hashText;
+	}
+	return false;
+}

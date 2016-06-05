@@ -1,0 +1,169 @@
+//Dorothy2
+//caption=kernel32
+//version=1.00
+//hint=
+//match=
+//author=xor
+//path=common
+//end
+function kernel32(){
+	this.dll = new DynaCall;
+	this.dll.register('kernel32.dll','CreateProcessA'	,'f=s','i=ssssblssss'	,'r=h');
+	this.dll.register('kernel32.dll','ExitProcess'		,'f=s','i=l'		,'r=h');
+	this.dll.register('kernel32.dll','OpenProcess' 		,'f=s','i=lbl' 		,'r=h');
+	this.dll.register('kernel32.dll','WaitForSingleObject'	,'f=s','i=hl'		,'r=l');
+	this.dll.register('kernel32.dll','CloseHandle'		,'f=s','i=h'		,'r=l');
+	this.dll.register('kernel32.dll','GetCurrentProcess'	,'f=s'			,'r=l');
+
+	//＊定数と構造体の置き場は変わるかも知れないので、使う人は注意して下さい
+	//dwFlagsの定数 
+	STARTF_USEPOSITION = 0x4;		//dwXとdwYを使用する
+	STARTF_USESIZE = 0x2;			//dwXSizeとdwYSizeを使用
+	STARTF_USECOUNTCHARS = 0x8;		//dwXCountCharsとdwYCountCharsを使用
+	STARTF_FILLATTRIBUTE = 0x10;		//dwFillAttributesを使用
+	STARTF_USESHOWWINDOW = 0x1;		//wShowWindowを使用
+	STARTF_USESTDHANDLES = 0x100;		//hStdErrorとhStdInputとhStdOutputを使用
+	STARTF_FORCEONFEEDBACK = 0x40;		//子の呼出し後の2秒間はカーソルをフィードバックモードにする
+	STARTF_FORCEOFFFEEDBACK = 0x80;		//プロセスの起動と同時にカーソルをフィードバックモードを解除
+
+	//dwCreateFlagsの定数
+	CREATE_DEFAULT_ERROR_MODE = 0x400000;	//作成したプロセスは呼び出したプロセスのエラーモードを継承しない
+	CREATE_NEW_CONSOLE = 0x10;		//作成したプロセスは新しいコンソールを持つ
+	CREATE_NEW_PROCESS_GROUP = 0x200;	//作成したプロセスは、新しいプロセスグループのルートプロセスになる
+	CRAETE_SUSPENED = 0x4;			//主スレッドを一時停止状態にする
+	CRAETE_UNICODE_ENVIRONMENT = 0x400;	//lpEnvironmentはUnicodeを使う
+	DEBUG_PROCESS = 0x1;			//作成したプロセスはデバッグ用(子プロセスでイベントが発生すると親プロセスに通知する)
+	DEBUG_ONLY_THIS_PROCESS = 0x2;		//デバッグ対象は起動プロセスのみ
+	DETACHED_PROCESS = 0x8;			//作成したプロセスは親コンソールのコンソールにアクセスできない
+
+
+
+	//dwDesiredAccessの定数
+	SYNCHRONIZE = 0x100000;
+	PROCESS_ALL_ACCESS = 0xFFF;		//(STANDARD_RIGHTS_REQUIRED Or SYNCHRONIZE Or &HFFF)
+	PROCESS_CREATE_PROCESS = 0x8;		//システム内部で使用
+	PROCESS_CREATE_THREAD = 0x2;		//CreateRomoteThread()関数で使用できる
+	PROCESS_DUP_HANDLE = 0x40;		//DuplicateHandle()関数で使用できる
+	PROCESS_SET_INFORMATION = 0x200;	//SetPriorityClass()関数で変更可能
+	PROCESS_TERMINATE = 0x1;		//TerminateProcess()関数で使用できる
+	PROCESS_VM_OPERATION = 0x8;		//VirtualProtectEx()関数、または  WriteProcessMemory()関数で使用できる
+	PROCESS_VM_READ = 0x0;			//ReadProcessMemory()関数で使用できる
+	PROCESS_WM_WRITE = 0x20;		//WriteProcessMemory()関数で使用できる
+
+	//dwMillisecondsの定数
+	INFINITE = 0xFFFFFFFF;			//終わるまでずーっと待機
+
+	//WaitForSingleObjectの戻り値
+	WAIT_ABANDONED = 0x00000080;		//指定されたオブジェクトは、放棄されたミューテックスオブジェクトでした
+	WAIT_OBJECT_0 = 0x00000000;		//指定したオブジェクトがシグナル状態になったことを意味します。
+	WAIT_TIMEOUT = 0x00000102;		//タイムアウト時間が経過し、指定されたオブジェクトが非シグナル状態であったことを意味します。
+	WAIT_FAILED = 0xFFFFFFFF;		//エラー
+
+
+	//優先順位クラスフラグ
+	HIGH_PRIORITY_CLASS = 0x80;
+	IDLE_PRIORITY_CLASS = 0x40;
+	NORMAL_PRIORITY_CLASS = 0x20;
+	REALTIME_PRIORITY_CLASS = 0x100;
+
+	//nShowCmd wShowWindow
+	SW_HIDE = 0;			//ウィンドウを非表示にし、他のウィンドウをアクティブにします。 
+	SW_MAXIMIZE = 3;		//指定されたウィンドウを最大化します。 
+	SW_MINIMIZE = 6;		//指定されたウィンドウを最小化し、Z オーダーが次の（つまり、奥行き方向で、指定されたウィンドウのすぐ奥にある）トップレベルウィンドウをアクティブにします。 
+	SW_RESTORE = 9;			//ウィンドウをアクティブにし、表示します。指定されたウィンドウが最小化または最大化されていた場合、元の位置とサイズに戻ります。最小化されたウィンドウを元のサイズへ戻す場合、アプリケーションはこのフラグを指定するべきです。 
+	SW_SHOW = 5;			//ウィンドウをアクティブにして、現在の位置とサイズで表示します。 
+	SW_SHOWDEFAULT = 10;		//アプリケーション（lpFile パラメータで指定した実行可能ファイル、または文書ファイルに関連付けられている実行可能ファイル）を起動したプログラム（開発者が作成した、ShellExecute を使う実行可能ファイル）が CreateProcess 関数に渡す STARTUPINFO 構造体の wShowWindow メンバで指定された SW_ フラグに基づいて、表示状態を設定します。アプリケーションは、このフラグを指定して ShowWindow 関数を呼び出し、自らのメインウィンドウの初期の表示状態を設定するべきです。 
+	SW_SHOWMAXIMIZED = 3;		//ウィンドウをアクティブにして、最大化します。 
+	SW_SHOWMINIMIZED = 2;		//ウィンドウをアクティブにして、最小化します。 
+	SW_SHOWMINNOACTIVE = 7;		//ウィンドウを最小化します。アクティブなウィンドウは、アクティブな状態を維持します。 
+	SW_SHOWNA = 8;			//ウィンドウを現在の状態で表示します。アクティブなウィンドウはアクティブな状態を維持します。 
+	SW_SHOWNOACTIVATE = 4;		//ウィンドウを直前の位置とサイズで表示します。アクティブなウィンドウはアクティブな状態を維持します。 
+	SW_SHOWNORMAL = 1;		//ウィンドウをアクティブにして、表示します。ウィンドウが最小化または最大化されているときは、位置とサイズを元へ戻します。アプリケーションは、ウィンドウを最初に表示するときにこのフラグを指定するべきです。 
+
+	SECURITY_ATTRIBUTES = "new Struct(
+		'nLength:l',			//構造体のバイト数
+		'lpSecurityDescriptor:l',	//セキュリティデスクリプタ(Win95,98では無効)
+		'bInheritHandle:l'		//1のとき、属性を継承する
+	)";
+
+	STARTUPINFO = "new Struct(
+		'cb:l',				//構造体のバイト数
+		'lpReserved:s',			//予約
+		'lpDesktop:s',			//WindowsNTのみサポート
+		'lpTitle:s',			//コンソールアプリケーションのときタイトルバーに表示されるテキスト
+		'dwX:l',			//ウィンドウの左上隅のX座標(dwFlags=STARTF_USEPOSITION以外のとき無効)
+		'dwY:l',			//同、Y座標(同上)
+		'dwXSize:l',			//ウィンドウの幅(dwFlags=STARTF_USESIZE以外のとき無効)
+		'dwYSize:l',			//同、高さ(同上)
+		'dwXCountChars:l',		//コンソールアプリケーションのときのX方向の文字数(dwFlags=STARTF_USECOUNTCHARS以外のとき無効)
+		'dwYCountChars:l',		//同、行数
+		'dwFillAttributes:l',		//同、文字色と背景色(dwFlags=STARTF_FILLATTRIBUTE以外のとき無効)
+		'dwFlags:l',			//有効なメンバを指定する定数組み合わせ
+		'wShowWindow:t',		//ウィンドウの表示状態(dwFlags=STARTF_USESHOWWINDOW以外のとき無効)
+		'cbReserved2:t',		//0
+		'lpReserved2:t',		//0
+		'hStdInput:l',			//標準入力ハンドルとして使用(dwFlags=STARTF_USESTDHANDLES以外のとき無効)
+		'hStdOutput:l',			//標準出力ハンドルとして使用(dwFlags=STARTF_USESTDHANDLES以外のとき無効)
+		'hStdError:l'			//標準エラーハンドルとして使用
+	)";
+
+	PROCESS_INFORMATION = "new Struct(
+		'hProcess:l',			//新しく作成されたプロセスのハンドル
+		'hThread:l',			//同、主スレッドのハンドル
+		'dwProcessId:l',		//プロセスID
+		'dwThreadId:l'			//スレッドID
+	)";
+}
+,
+
+
+
+kernel32.prototype.CreateProcess = function(lpApplicationName , 	//実行モジュール名
+					lpCommandLine ,			//コマンドライン
+					lpProcessAttributes , 		//ハンドルが子プロセスによって継承されるかを指定するSECURITY_ATTRIBUTES構造体 NULL を指定すれば、ハンドルは継承されません
+					lpThreadAttributes , 		//ハンドルが子プロセスによって継承されるかを指定するSECURITY_ATTRIBUTES構造体 NULL を指定すれば、ハンドルは継承されません
+					bInheritHandles , 		//新しいプロセスが呼び出しプロセスのハンドルを継承するかどうか
+					dwCreateionFlags , 		//プロセスの作成方法を指定する定数の組み合わせ
+					lpEnvironment , 		//環境文字列 nullのとき呼び出したプロセスの環境を利用する
+					lpCurrentDirectory , 		//作成したプロセスが動作するカレントディレクトリ名
+					lpStartupInfo , 		//新しいプロセスのウィンドウの表示方法を指定する STARTUPINFO構造体
+					lpProcessInformation)		//(戻り値)新しいプロセスに関する情報を受け取る PROCESS_INFORMATION構造体
+{
+	return this.dll.CreateProcessA(lpApplicationName , lpCommandLine ,lpProcessAttributes , 
+					lpThreadAttributes , bInheritHandles , dwCreateionFlags , 
+					lpEnvironment , lpCurrentDirectory , lpStartupInfo , lpProcessInformation);
+	//戻り値
+	//正常終了のとき  0以外
+	//エラーのとき	0
+
+/*
+	com mon_load('kernel32');
+	k32 = new kernel32();
+	si = eval(STARTUPINFO);
+	si.cb = sui.sizeOf();
+	si.dwFlags = STARTF_USESHOWWINDOW;
+	si.wShowWindow = 1;
+	pi = eval(PROCESS_INFORMATION);
+	ret = k32.CreateProcess( null , 'notepad.exe' , null , null , 0 , CREATE_NEW_CONSOLE , null , null , si , pi);
+*/
+}
+,
+
+kernel32.prototype.OpenProcess = function(dwDesiredAccess , bInheritHandle , dwProcessId ){
+	return this.dll.OpenProcess(dwDesiredAccess , bInheritHandle , dwProcessId );
+}
+,
+
+kernel32.prototype.WaitForSingleObject = function(hHandle , dwMilliseconds ){
+	return this.dll.WaitForSingleObject(hHandle , dwMilliseconds );
+}
+,
+
+kernel32.prototype.CloseHandle = function(hObject){
+	return this.dll.CloseHandle(hObject);
+},
+
+kernel32.prototype.GetCurrentProcess = function(){
+	return this.dll.GetCurrentProcess();
+	//カレントプロセスの擬似ハンドル
+}

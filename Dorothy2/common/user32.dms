@@ -1,0 +1,126 @@
+//Dorothy2
+//caption=user32
+//version=1.00
+//hint=
+//match=
+//author=xor
+//path=common
+//end
+
+
+function user32(){
+	this.dll = new DynaCall;
+	this.dll.register('user32.dll','GetWindowThreadProcessId'	,'f=s','i=hs'	,'r=h');
+	this.lpdwProcessID = new Struct('ProcessID:l');
+
+	this.dll.register('user32.dll','PeekMessageA'			,'f=s','i=shlll','r=h');
+	this.dll.register('user32.dll','CreateWindowEx'			,'f=s','i=lssllllhlll','r=h');
+	this.dll.register('user32.dll','SetActiveWindow'		,'f=s','i=h','r=h');
+	this.dll.register('user32.dll','GetDesktopWindow'		,'f=s','r=h');
+	this.dll.register('user32.dll','SendMessageA'			,'f=s','i=hlll','r=l');
+
+	common_load('CONSTANT\WindowStyles');
+	C();
+
+	//Messege
+	WM_CLOSE = 0x10;
+
+	//wRemoveMsgの定数
+	PM_NOREMOVE = 0x0;                            //メッセージキューに残す
+	PM_REMOVE = 0x1;                              //メッセージキューから削除
+
+	PM_NOYIELD = 0x2;
+
+//オプションで、PM_NOYIELD フラグを、PM_NOREMOVE と PM_REMOVE のどちらかのフラグに組み合わせて使うこともできます。
+//PM_NOYIELD フラグを指定すると、呼び出し側がアイドル状態になるのを待っているスレッドが存在する場合、
+//システムがそのスレッドを解放することを防止できます（WaitForInputIdle 関数を参照してください）。
+
+
+	//MSG構造体
+	MSG = "new Struct(
+		'hWnd:h',		//ウィンドウのハンドル
+		'messageID:l',		//メッセージのID
+		'wPrama:l',		//同、パラメータ1
+		'lParam:l',		//同、パラメータ2
+		'time:l',		//メッセージが送られた時間
+		'pt:s'			//マウスカーソルの位置を示すPOINTAPI構造体
+	)";
+
+	//POINTAPI構造体
+	POINTAPI = "new Struct(
+		'X:l',			//X座標
+		'Y:l'			//Y座標
+	)";
+
+}
+,
+user32.prototype.GetWindowThreadProcessId = function(hWnd , lpdwProcessID){
+	this.lpdwProcessID.ProcessID = lpdwProcessID;
+	var ret = this.dll.GetWindowThreadProcessId(hWnd , this.lpdwProcessID);
+	this.ProcessID = this.lpdwProcessID.ProcessID;
+	return ret;
+}
+,
+user32.prototype.PeekMessage = function(lpMsg, hWnd,  wMsgFilterMin,  wMsgFilterMax,  wRemoveMsg ){
+	return this.dll.PeekMessageA(lpMsg, hWnd,  wMsgFilterMin,  wMsgFilterMax,  wRemoveMsg);
+},
+user32.prototype.CreateWindowEx = function(dwExStyle, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, hInstance, lpParam){
+	return this.dll.CreateWindowEx(dwExStyle, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, hInstance, lpParam);
+/*
+HWND CreateWindowEx(
+  DWORD dwExStyle,      // 拡張ウィンドウスタイル
+  LPCTSTR lpClassName,  // 登録されているクラス名
+  LPCTSTR lpWindowName, // ウィンドウ名
+  DWORD dwStyle,        // ウィンドウスタイル
+  int x,                // ウィンドウの横方向の位置
+  int y,                // ウィンドウの縦方向の位置
+  int nWidth,           // ウィンドウの幅
+  int nHeight,          // ウィンドウの高さ
+  HWND hWndParent,      // 親ウィンドウまたはオーナーウィンドウのハンドル
+  HMENU hMenu,          // メニューハンドルまたは子識別子
+  HINSTANCE hInstance,  // アプリケーションインスタンスのハンドル
+  LPVOID lpParam        // ウィンドウ作成データ
+);
+
+lpClassName パラメータには、次に示す定義済みのシステムクラスを指定できます。dwStyle パラメータには、対応するコントロールスタイルしか指定できないので注意してください。
+
+クラス 		意味 
+BUTTON 		ユーザーがクリックしてオンにしたりオフにしたりできるボタンを表す小さな長方形の子ウィンドウです。ボタンコントロールは単独でもグループでも使用でき、ラベルを付けることもテキストなしで表示することもできます。通常、ユーザーがボタンをクリックすると、その外観が変化します。詳細については、「Buttons」を参照してください。 
+		dwStyle パラメータに指定できるボタンスタイルの表については、「Button Styles」を参照してください。
+ 
+COMBOBOX 	リストボックスと選択フィールドから成る、エディットコントロールに似たコントロールです。このスタイルを使う場合、リストボックスは、常に表示するかまたはドロップダウン表示することになります。リストボックスが可視状態のときに、ユーザーが選択フィールドに文字を入力すると、リストボックス内の先頭が入力した文字と一致する最初の項目が強調表示されます。逆に、ユーザーがリストボックス内の項目を選択すると、選択したテキストが選択フィールドに表示されます。詳細については、「Combo Boxes」を参照してください。 
+		dwStyle パラメータに指定できるコンボボックススタイルの表については、「Combo Box Styles」を参照してください。
+ 
+EDIT 		ユーザーがキーボードからテキストを入力できる長方形の子ウィンドウです。ユーザーは、コントロールをクリックするか、または［Tab］キーを使ってコントロールを選択することにより、そのコントロールにキーボードフォーカスを与えることができます。エディットコントロール上でキャレットが点滅表示しているときには、テキストを入力できます。文字を削除するには［BackSpace］キーなどを使います。キャレットの移動、置換する文字の選択などには、マウスを使用できます。詳細については、「Edit Controls」を参照してください。 
+		dwStyle パラメータに指定できるエディットコントロールスタイルの表については、「Edit Control Styles」を参照してください。
+ 
+LISTBOX 	文字列のリスト（ 一覧）です。ユーザーに選択肢（ ファイル名など）の一覧を提示する場合に使用します。ユーザーは、クリックにより文字列を選択できます。選択された文字列は強調表示されます。このとき、親ウィンドウに通知メッセージが送られます。詳細については、「List Boxes」を参照してください。 
+		dwStyle パラメータに指定できるリストボックスコントロールスタイルの表については、「List Box Styles」を参照してください。
+ 
+MDICLIENT 	MDI クライアントウィンドウです。このウィンドウは、MDI アプリケーションの子ウィンドウを制御するメッセージを受け取ります。推奨されるスタイルビットは、WS_CLIPCHILDREN と WS_CHILD です。スクロールバーを付けるときは、WS_HSCROLL と WS_VSCROLL を使います。詳細については、「Multiple Document Interface」を参照してください。 
+		RichEdit Version 1.0 のリッチエディットコントロールです。このウィンドウでは、文字書式および段落書式を持つテキストを表示し、編集できます。埋め込みの COM オブジェクトも入れることができます。詳細については、「Rich Edit Controls」を参照してください。 
+		dwStyle パラメータに指定できるリッチエディットコントロールスタイルの表については、「Rich Edit Control Styles」を参照してください。
+ 
+RICHEDIT_CLASS 	Version 2.0 のリッチエディットコントロールです。このコントロールでは、文字書式および段落書式を持つテキストを表示し、編集できます。埋め込みの COM オブジェクトも入れることができます。詳細については、「Rich Edit Controls」を参照してください。 
+		dwStyle パラメータに指定できるリッチエディットコントロールスタイルの表については、「Rich Edit Control Styles」を参照してください。
+ 
+SCROLLBAR 	つまみを持ち、両端に矢印ボタンがある長方形です。ユーザーがコントロールをクリックするたびに、親ウィンドウに通知メッセージが送られます。つまみの位置の更新は、必要に応じて親ウィンドウが行います。詳細については、「Scroll Bars」を参照してください。 
+		dwStyle パラメータに指定できるスクロールバーコントロールスタイルの表については、「Scroll Bar Control Styles」を参照してください。
+ 
+STATIC 		単純なテキストフィールドやボックスとして使ったり、他のコントロールへのラベル付け、複数のコントロールのグループ化や分離などに使える長方形です。スタティックコントロールは入出力を行いません。詳細については、「Static Controls」を参照してください。 
+		dwStyle パラメータに指定できるスタティックコントロールスタイルの表については、「Static Control Styles」を参照してください。
+ 
+*/
+}
+,
+user32.prototype.SetActiveWindow = function( hWnd){
+	return this.dll.SetActiveWindow(hWnd);
+}
+,
+user32.prototype.GetDesktopWindow = function(){
+	return this.dll.GetDesktopWindow();
+}
+,
+user32.prototype.SendMessage = function(hWnd , Msg , wParam , lParam){
+	return this.dll.SendMessageA(hWnd , Msg , wParam , lParam);
+}

@@ -1,0 +1,82 @@
+function(){
+	var link = function(http){
+		var s = http.data;
+		var items_match_source = 'Ç±Ç±Ç…ÉRÅ[Éh';
+		var re = new RegExp(items_match_source , 'ig');
+		var all = s.match(re);
+		if(all == null){
+			return false;
+		}
+		re = new RegExp(items_match_source , 'i');
+		for(i in all){
+			list_count++;
+			all.match(re);
+			var dat1 = RegExp.$1;
+			var item_url = url.expand(dat1);
+			list.add(item_url + "\t\t" + dat1);
+		}
+		page_items = all.length;
+		return true;
+	};
+	var next = function(http){
+		println('page- ' +  ++page_count + '  :items- ' + page_items);
+		var s = http.data;
+		var i;
+		if(!s.match(/<a href="([^"]+)"[^>]*>next<\/a>/i)){	//éüÇÃÇtÇqÇk
+			return false;
+		}
+		var next_url = url.expand(RegExp.$1);
+		return next_url;
+	};
+
+	common_load('download');
+	var list = new Strings;
+	var list_count = 0;
+	var page_count = 0;
+	var page_items = 0;
+	var retry_count = 5;
+	var retry_waite = 1000;
+	var ret_flg;
+	var url = new URL(urlinfo.url);
+	var url2 = url.url;
+	do{
+		var count = retry_count;
+		ret_flg = true;
+		do{
+			var http = download(url2);
+			if(http.responseHeader.code != 200){
+				urlinfo.url = '';
+				urlinfo.proxy = '';
+				return;
+			}
+			if(!link(http)){
+				if(0 == count--){
+					urlinfo.url = '';
+					urlinfo.proxy = '';
+					return;
+				}
+				sleep(retry_waite);
+			}
+			else{
+				ret_flg = false;
+			}
+		}
+		while(ret_flg);
+	}
+	while (url2 = next(http));
+
+	println('total - ' + list_count);
+	if(http.data.match(/<title>([^<]*)<\/title>/i)){
+		var list_name = RegExp.$1;
+	}
+	else{
+		var list_name = 'no-title';
+	}
+	var path = folderdata.Folder;
+	var path2 = path + changeFileName(list_name) + '_play_list.txt';
+	println('out> ' + path2);
+	list.saveToFile(path2);
+	urlinfo.url = 'http://www.google.co.jp/';
+	headers['Host'] = 'www.google.co.jp';
+	Dorothy.fileName = 'remove';
+}

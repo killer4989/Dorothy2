@@ -1,0 +1,34 @@
+//Dorothy2
+//caption=ini load
+//version=1.0
+//hint=ini_load(path[,ini_Object])
+//match=
+//author=xor
+//generator=
+//path=common
+//end
+//ini_Object:{section1:{key1:data1,key2:data2...} , section2:{key1:data1,key2:data2...}...}
+function ini_load(path ,ini_data){
+	var i,j,t,ans;
+	var v = new Object;
+	if(!isUndefined(ini_data)){
+		v = ini_data;
+	}
+	var path2 = Dorothy.path + path;
+	var ini = new Ini(path2);
+	var secs = ini.readSections();
+	if(secs != ''){
+		for(i in secs){
+			sec = ini.readSection(secs[i]);
+			if(isUndefined(v[secs[i]])){
+				v[secs[i]] = new Object;
+			}
+			for(j in sec){
+				ans = ini.read(secs[i] , sec[j] , '');
+				print_debug('debug>ini_load>read>[' + secs[i] + ']' + sec[j] + '=' + ans);
+				v[secs[i]][sec[j]] = ans;
+			}
+		}
+	}
+	return v;
+}

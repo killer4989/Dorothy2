@@ -1,0 +1,27 @@
+//Dorothy2
+//caption=debug_view
+//version=1.0
+//hint=デバッグ用
+//match=
+//author=xor
+//generator=
+//path=common
+//end
+function debug_view(str){
+	var data_name = 'temp.txt';
+	var editor_name = optiondata.Editor;
+	if(editor_name == ''){
+		editor_name = 'notepad.exe';
+	}
+	var s = new Strings();
+	s.assign(str);
+	var path = Dorothy.temp;
+	var d =  new Directory(path);
+	if(! d.exists()){
+		d.make();
+	}
+	s.saveToFile(path + data_name);
+	//run
+	Win32.shellExecute('open' , '"' + editor_name + '"' ,  '"' + path + data_name + '"');
+	return;
+}

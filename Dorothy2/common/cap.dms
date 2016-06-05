@@ -1,0 +1,111 @@
+//Dorothy2
+//caption=cap
+//version=1.0
+//hint=Cap
+//match=
+//author=xor
+//path=common
+//priority=
+//end
+function cap(imageData , WaitingTime , batName , imageName , txtName){
+	//debug =true;
+
+	var i,code,old_code;
+
+	var mutex = new Mutex('cap');
+	mutex.lock();
+	
+	//Cap Path
+	var dirPath = Dorothy.path + 'bin\Cap\';
+	var dirPath2 = Dorothy.path + 'bin\Cap';
+
+	//bat path
+	var batPath = dirPath + batName;
+
+	//image path
+	var imagePath = dirPath + imageName;
+
+	//text path
+	var txtPath = dirPath + txtName;
+
+	//batが有るかチェック
+	var testFile = new File(batPath);
+	if(!testFile.exists()){
+		println('error---> capのbatが見つかりません、capが正しいフォルダに有るか、capのバージョンが対応しているか、確認して下さい');
+		mutex.unlock();
+		return '';
+	}
+
+	//image出力
+	var file1 = new File(imagePath);
+	file1.open('w');
+	file1.write(imageData);
+	file1.close();
+
+	//txtクリア
+	var file2 = new File(txtPath);
+	if(file2.exists()){
+		file2.remove();
+	}
+
+	//bat 実行
+	common_load('kernel32','user32');
+	var k32 = new kernel32();
+	var u32 = new user32();
+	var si = eval(STARTUPINFO);
+	si.cb = si.sizeOf();
+	si.dwFlags = STARTF_USESHOWWINDOW;
+	si.wShowWindow = SW_HIDE;
+	var pi = eval(PROCESS_INFORMATION);
+	var msgDummy = eval(MSG); 
+	ret = u32.PeekMessage(msgDummy, null , 0, 0, PM_NOREMOVE);
+	var ret = k32.CreateProcess(batPath , null , null , null , false , NORMAL_PRIORITY_CLASS , null , dirPath , si , pi);
+	if(ret == 0){
+		println('error---> Capの呼出に失敗しました。(code=' + ret + ')');
+		mutex.unlock();
+		return '';
+	}
+	//ret = k32.CloseHandle(pi.hThread);
+	try{
+		ret = k32.WaitForSingleObject(pi.hProcess , WaitingTime * 1000);
+		if(ret == WAIT_FAILED){
+			throw('WaitForSingleObject');
+		}
+		if(ret == WAIT_ABANDONED){
+			throw('オブジェクトが破棄されてます');
+		}
+		if(ret == WAIT_TIMEOUT){
+			throw('タイムアウトです、設定時間を長めにしてみて下さい');
+		}
+		if(ret == WAIT_OBJECT_0){
+			println('ok');
+		}
+		else{
+			throw('未知のエラー　' + ret);
+		}
+	}
+	catch(e){
+		println('error---> ' + e);
+	}
+	finally{
+		ret = k32.CloseHandle(pi.hProcess);
+	}
+
+	//text 回収
+	var file2 = new File(txtPath);
+	if(!file2.exists()){
+		println('error---> テキストファイルが見つからない');
+		mutex.unlock();
+		return '';
+	}
+	file2.open('r');
+	var code = file2.read();
+	file2.close();
+
+	if(code == null){
+		code = '';
+	}
+
+	mutex.unlock();
+	return code;
+}

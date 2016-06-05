@@ -1,0 +1,77 @@
+//Dorothy2
+//caption=Constant (Extended) Window Styles
+//version=1.00
+//hint=定数
+//match=
+//author=xor
+//path=common
+//end
+function C(){
+//dwExStyle 
+//作成するウィンドウの拡張ウィンドウスタイルを指定します。次の値を組み合わせて指定できます。
+WS_EX_ACCEPTFILES = 0x10;	// ドラッグアンドドロップでファイルを受け入れます。 
+WS_EX_APPWINDOW = 0x40000;	//ウィンドウが表示されているときには、必ずトップレベルウィンドウがタスクバー上に置かれます。 
+WS_EX_CLIENTEDGE = 0x200;	//縁が沈んで見える境界線を持ちます。 
+WS_EX_CONTEXTHELP = 0x400;	//ウィンドウのタイトルバーに［?］ボタンを追加します。ユーザーがこの［?］ボタンをクリックすると、マウスポインタに疑問符が付きます。その後、ユーザーが子ウィンドウをクリックすると、その子ウィンドウに WM_HELP メッセージが送られます。子ウィンドウは、親ウィンドウのプロシージャにそのメッセージを渡さなければなりません。メッセージを受け取ったプロシージャは、HELP_WM_HELP コマンドを使って WinHelp 関数を呼び出さなければなりません。ヘルプアプリケーションは、通常、子ウィンドウに関するヘルプの入ったポップアップウィンドウを表示します。 
+				//WS_EX_CONTEXTHELP は WS_MAXIMIZEBOX スタイルや WS_MINIMIZEBOX スタイルとは一緒に使用できません。
+ 
+WS_EX_CONTROLPARENT = 0x10000;	//ウィンドウが持つ子ウィンドウを、そのダイアログボックスナビゲーションに含めます。このスタイルを指定すると、ダイアログマネージャは、ナビゲーション操作を実行するとき（［Tab］キー、方向キー、キーボード操作などを処理する際）に、このウィンドウの子ウィンドウにまで再帰的に移動します。 
+WS_EX_DLGMODALFRAME = 0x01;	//二重の境界線を持つウィンドウを作成します。dwStyle パラメータに WS_CAPTION スタイルを指定して、タイトルバーを持たせることもできます。 
+//WS_EX_LAYERED Windows 2000：レイヤーウィンドウ を作成します。 
+//WS_EX_LAYOUTRTL Windows 2000：右端が水平方向の原点となるウィンドウを作成します。左に行くにつれ、座標値が大きくなります。 
+WS_EX_LEFT = 0x0;		//一般的な左揃えのプロパティを持つウィンドウを作成します。このスタイルは、既定です。 
+WS_EX_LEFTSCROLLBAR = 0x4000;	//垂直スクロールバーがクライアント領域の左側に置かれます。ヘブライ語やアラビア語などの読みの方向をサポートしている言語をシェル言語としているシステムで有効です。他の言語では、このスタイルは無視されます。 
+WS_EX_LTRREADING = 0x0;		//左から右への読み取り順序を持つプロパティを持ったウィンドウを作成します。このスタイルは、既定です。 
+WS_EX_MDICHILD = 0x40;		//MDI子ウィンドウを作成します。 
+WS_EX_NOACTIVATE = 0x8000000;	// Windows 2000：このスタイルで作成されたトップレベルウィンドウは、ユーザーがクリックしてもフォアグラウンドウィンドウになりません。ユーザーがフォアグラウンドウィンドウを最小化したり閉じたりしたときにも、システムがこのウィンドウをフォアグラウンドウィンドウにすることはありません。 
+				//このウィンドウをアクティブにするには、SetActiveWindow 関数または SetForegroundWindow 関数を使います。
+
+				//既定では、このウィンドウはタスクバーには表示されません。ウィンドウがタスクバーに表示されるようにするには、WS_EX_APPWINDOW スタイルを指定します。
+WS_EX_TOOLWINDOW = 0x80;	//ツールウィンドウを作成します。これは、フローティングツールバー用のウィンドウです。ツールウィンドウは、通常のタイトルバーより小さいタイトルバーを持ち、ウィンドウタイトルも通常より小さいフォントで表示されます。タスクバーや、［Alt］＋［Tab］キーを押したとき現れるダイアログには表示されません。ツールウィンドウがシステムメニューを持つ場合でも、タイトルバーにアイコンは表示されません。システムメニューを表示するには、右クリックするか、または［Alt］＋［Space］キーを押します。 
+WS_EX_TOPMOST = 0x8; 		//最前面ウィンドウを作成します。このウィンドウは、アクティブでないときにも他のウィンドウの前面に表示されます。このスタイルは、SetWindowPos 関数を使って有効にしたり無効にしたりできます。 
+WS_EX_WINDOWEDGE = 0x100;	// 盛り上がった縁の境界線を持ちます。 
+WS_EX_NOINHERITLAYOUT = 0x100000; //Windows 2000：このスタイルで作成されたウィンドウは、そのウィンドウレイアウトを子ウィンドウに渡しません。 
+WS_EX_NOPARENTNOTIFY = 0x4;	//このスタイルで作成された子ウィンドウは、作成されたり破棄されたりしたときに親ウィンドウに WM_PARENTNOTIFY メッセージを送りません。 
+WS_EX_OVERLAPPEDWINDOW = (WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE);	//WS_EX_CLIENTEDGE スタイルと WS_EX_WINDOWEDGE スタイルの組み合わせです。 
+WS_EX_PALETTEWINDOW = (WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST);	// WS_EX_WINDOWEDGE スタイル、WS_EX_TOOLWINDOW スタイル、WS_EX_TOPMOST スタイルの組み合わせです。 
+WS_EX_RIGHT = 0x1000;		// 一般的な右揃えのプロパティを持つウィンドウを作成します。このスタイルは、ウィンドウクラスに依存します。ヘブライ語やアラビア語などの読みの方向をサポートしている言語をシェル言語としているシステムで有効です。他の言語では、このスタイルは無視されます。 
+WS_EX_RIGHTSCROLLBAR = 0x0;	// 垂直スクロールバーがクライアント領域の右側に置かれます。このスタイルは、既定です。 
+WS_EX_RTLREADING = 0x2000;	// 右から左への読み取り順序のプロパティを使ってテキストを表示するウィンドウを作成します。ヘブライ語やアラビア語などの読みの方向をサポートしている言語をシェル言語としているシステムで有効です。他の言語では、このスタイルは無視されます。 
+WS_EX_STATICEDGE = 0x20000;	// ユーザー入力を受け付けない項目用の立体的に見える境界スタイルを持つウィンドウを作成します。 
+WS_EX_TRANSPARENT = 0x20;	// このスタイルで作成されたウィンドウは、その下にある兄弟ウィンドウ（ 同じスレッドにより作成されたウィンドウ）が描画されるまでは描画されません。下にある兄弟ウィンドウのビットが既に描画されているため、ウィンドウは透明に見えます。 
+				//この制限なしに透明な効果を得るには、SetWindowRgn 関数を使います。
+ 
+
+
+
+
+//ウィンドウスタイルの定数
+
+WS_BORDER = 0x800000;		//フォームの枠線がある
+WS_CAPTION = 0xC00000;		//WS_BORDER Or WS_DLGFRAME
+WS_CHILD = 0x40000000;		//親ウインドウを持つｺﾝﾄﾛｰﾙ(子ウインドウ)を作成する
+WS_CHILDWINDOW = (WS_CHILD);	//子ウインドウ
+WS_CLIPCHILDREN = 0x2000000;	//フォームの更新時にコントロールの再描画を抑制する
+WS_CLIPSIBLINGS = 0x4000000;	//コントロールの更新時に他のコントロールの再描画を抑制する
+WS_DISABLED = 0x8000000;	//Enabled = False
+WS_DLGFRAME = 0x400000;		//リサイズできない枠線を持つ
+WS_GROUP = 0x20000;		//コントロール グループの最初のコントロールである
+WS_HSCROLL = 0x100000;		//水平スクロールバーがある
+WS_MAXIMIZE = 0x1000000;	//初期状態で最大化する
+WS_MAXIMIZEBOX = 0x10000;	//最大化ボタンを持つ
+WS_MINIMIZE = 0x20000000;	//初期状態で最小化する
+WS_MINIMIZEBOX = 0x20000;	//最小化ボタンを持つ
+WS_ICONIC = WS_MINIMIZE;	//WS_MINIMIZE と同じ
+WS_POPUP = 0x80000000;		//ポップアップ型ウインドウ
+WS_SYSMENU = 0x80000;		//システムメニューがある
+WS_TABSTOP = 0x10000;		//タブストップ可能
+WS_THICKFRAME = 0x40000;	//リサイズ可能な枠線を持つ
+WS_VISIBLE = 0x10000000;	//Visibleである
+WS_VSCROLL = 0x200000;		//垂直スクロールバーがある
+WS_OVERLAPPED = 0x0;		//フォーム枠線とキャプションバーがある
+WS_OVERLAPPEDWINDOW = (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);//標準的なスタイル
+WS_POPUPWINDOW = (WS_POPUP | WS_BORDER | WS_SYSMENU);//ポップアップ型の標準的なスタイル
+WS_SIZEBOX = WS_THICKFRAME;	//WS_THICKFRAME と同じ
+WS_TILEDWINDOW = WS_OVERLAPPEDWINDOW;//32ビット版ではこれを使うことが多い
+WS_TILED = WS_OVERLAPPED;	//WS_OVERLAPPED のと同じ
+}

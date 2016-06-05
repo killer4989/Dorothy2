@@ -1,0 +1,59 @@
+//Dorothy2
+//caption=fileSave
+//version=1.0
+//hint=fileSave(filename , data)
+//match=
+//author=xor
+//path=common
+//end
+//=========================================================
+//ファイルを書き込む
+//filename = path は付けずにファイル名のみ
+//           フォルダはダウンロードするフォルダと同じになる
+//data = ファイルに書き込むデータ
+//
+//reutrn 成功 true
+//       失敗 false
+//=========================================================
+function fileSave(filename , data){
+	//保存するホルダー
+	common_load('saveFolder');
+	dir = new Directory(saveFolder());
+	//フォルダが無かったら作る
+	if(!dir.exists()){
+		dir.make();
+	}
+
+	//ファイル
+	var file = new File(dir.includePathDelimiter() + changeFileName(filename));
+	var ext = file.extractExt();
+	var file1 = file.path.slice( 0 , file.path.length - ext.length);
+	var count = 0;
+	//ファイル名重複チェック
+	while(file.exists()){
+		file = new File(file1 + '(' + ++count + ')' + ext);
+		if(count > 1000){
+			println('ファイル名重複チェックエラー');
+			return false;
+		}
+	}
+
+	//書込み
+	var errf = false;
+	try{
+		file.open('w');
+		file.write(data);
+	}
+	catch(e){
+		println('file 書込みエラー ' + e);
+		errf = true;
+	}
+	finally{
+		file.close();
+	}
+	if(errf){
+		return false;
+	}
+	println('file write--->' + file.path);
+	return true;
+}

@@ -1,0 +1,27 @@
+//Dorothy2
+//caption=help
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=
+//end
+function(){
+	var path = irvine_script_path;
+	var pathA = path + 'Dorothy2A.dms';
+	var data = file_load(pathA);
+	data.match(/version=(.+?)$/m);
+	Aversion = RegExp.$1;
+
+	var pathSet = path + 'Dorothy2Set.dms';
+	data = file_load(pathSet);
+	data.match(/version=(.+?)$/m);
+	Sversion = RegExp.$1;
+
+	var frm = new VCLForm(true);
+	frm.loadFromFile(dorothy2_system_menu_help + 'version.dfm');
+	frm.Version.Caption = 'Dorothy2Set.dms ' + Sversion;
+	frm.Version2.Caption = 'Dorothy2A.dms ' + Aversion;
+	frm.showModal();
+
+}

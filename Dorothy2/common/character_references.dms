@@ -1,0 +1,132 @@
+//Dorothy2
+//caption=character_references
+//version=1.04
+//hint=test
+//match=
+//author=xor
+//path=common
+//end
+function character_references(filename){
+	while (filename.match(/&#0/) != null)
+		filename = filename.replace(/&#0/g,"&#");
+	//ãLçÜ
+	filename = filename.replace(/&#38;|&amp;/g,"&");
+	filename = filename.replace(/&#38;|&amp;/g,"&");
+	filename = filename.replace(/&nbsp;/g," ");
+	filename = filename.replace(/&#34;|&quot;/g,"\"");
+	filename = filename.replace(/&#39;/g,"'");
+	filename = filename.replace(/&#60;|&lt;/g,"<");
+	filename = filename.replace(/&#62;|&gt;/g,">");
+	filename = filename.replace(/&#128;|&euro;/g,"_");
+	filename = filename.replace(/&#137;|&permil;/g,"ÅÒ");
+	filename = filename.replace(/&#132;/g,"_");
+	filename = filename.replace(/&#133;/g,"Åc");
+	filename = filename.replace(/&#134;/g,"Åı");
+	filename = filename.replace(/&#135;/g,"Åˆ");
+	filename = filename.replace(/&#139;/g,"_");
+	filename = filename.replace(/&#155;/g,"_");
+	filename = filename.replace(/&#171;/g,"Å·");
+	filename = filename.replace(/&#187;/g,"Å‚");
+	filename = filename.replace(/&#149;/g,"_");
+	filename = filename.replace(/&#153;|&trade;/g,"TM");
+	filename = filename.replace(/&#161;|&iexcl;/g,"!");
+	filename = filename.replace(/&#162;|&cent;/g,"Åë");
+	filename = filename.replace(/&#163;|&pound;/g,"Åí");
+	filename = filename.replace(/&#164;|&curren;/g,"_");
+	filename = filename.replace(/&#165;|&yen;/g,"\\");
+	filename = filename.replace(/&#166;|&brvbar;/g,"|");
+	filename = filename.replace(/&#167;|&sect;/g,"Åò");
+	filename = filename.replace(/&#168;|&uml;/g,"ÅN");
+	filename = filename.replace(/&#169;|&copy;/g,"c");
+	filename = filename.replace(/&#170;|&ordf;/g,"a");
+	filename = filename.replace(/&#174;|&reg;/g,"R");
+	filename = filename.replace(/&#176;|&deg;/g,"Åã");
+	filename = filename.replace(/&#181;|&micro;/g,"É ");
+	filename = filename.replace(/&#182;|&para;/g,"Å˜");
+	filename = filename.replace(/&#8539;/g,"1/8");
+	filename = filename.replace(/&#188;|&frac14;/g,"1/4");
+	filename = filename.replace(/&#8540;/g,"3/8");
+	filename = filename.replace(/&#189;|&frac12;/g,"1/2");
+	filename = filename.replace(/&#8541;/g,"5/8");
+	filename = filename.replace(/&#190;|&frac34;/g,"3/4");
+	filename = filename.replace(/&#8542;/g,"7/8");
+	filename = filename.replace(/&#191;|&iquest;/g,"_");
+	filename = filename.replace(/&#171;|&laquo;/g,"Å·");
+	filename = filename.replace(/&#187;|&raquo;/g,"Å‚");
+
+	filename = filename.replace(/&ldquo;/g,"Åg");
+	filename = filename.replace(/&rdquo;/g,"Åh");
+
+	//éZèpãLçÜ
+	filename = filename.replace(/&#172;|&not;/g,"Å ");
+	filename = filename.replace(/&#177;|&plusmn;/g,"Å}");
+	filename = filename.replace(/&#215;|&times;/g,"Å~");
+	filename = filename.replace(/&#247;|&divide;/g,"ÅÄ");
+	filename = filename.replace(/&#186;/g,"o");
+	filename = filename.replace(/&#185;|&sup1;/g,"1");
+	filename = filename.replace(/&#178;|&sup2;/g,"2");
+	filename = filename.replace(/&#179;|&sup3;/g,"3");
+	filename = filename.replace(/&#8704;|&forall;/g,"ÅÕ");
+	filename = filename.replace(/&#8707;|&exist;/g,"ÅŒ");
+	filename = filename.replace(/&#8706;|&part;/g,"Å›");
+	filename = filename.replace(/&#8710;/g,"É¢");
+	filename = filename.replace(/&#8711;|&nabla;/g,"Åﬁ");
+	filename = filename.replace(/&empty;/g,"_");
+	filename = filename.replace(/&#8712;|&isin;/g,"Å∏");
+	filename = filename.replace(/&notin;/g,"_");
+	filename = filename.replace(/&#8715;|&ni;/g,"Åπ");
+	filename = filename.replace(/&#8719;|&prod;/g,"ÉÆ");
+	filename = filename.replace(/&#8721;|&sum;/g,"áî");
+	filename = filename.replace(/&#8722;|&minus;/g,"-");
+	filename = filename.replace(/&lowast;/g,"*");
+	filename = filename.replace(/&#8730;|&radic;/g,"Å„");
+	filename = filename.replace(/&#8733;|&prop;/g,"ÅÂ");
+	filename = filename.replace(/&#8734;|&infin;/g,"Åá");
+	filename = filename.replace(/&#8765;/g,"Å‰");
+	filename = filename.replace(/&#8736;|&ang;/g,"Å⁄");
+	filename = filename.replace(/&#8743;|&and;/g,"Å»");
+	filename = filename.replace(/&#8744;|&or;/g,"Å…");
+	filename = filename.replace(/&#8745;|&cap;/g,"Åø");
+	filename = filename.replace(/&#8746;|&cup;/g,"Åæ");
+	filename = filename.replace(/&#8747;|&int;/g,"ÅÁ");
+	filename = filename.replace(/&#8748;/g,"ÅË");
+	filename = filename.replace(/&#8750;/g,"áì");
+	filename = filename.replace(/&#8756;|&there4;/g,"Åà");
+	filename = filename.replace(/&#8757;/g,"ÅÊ");
+	filename = filename.replace(/&sim;/g,"Å`");
+	filename = filename.replace(/&#8786;|&cong;/g,"_");
+	filename = filename.replace(/&#8776;|&asymp;/g,"_");
+	filename = filename.replace(/&#8800;|&ne;/g,"ÅÇ");
+	filename = filename.replace(/&#8801;|&equiv;/g,"Åﬂ");
+	filename = filename.replace(/&#8804;|&le;/g,"ÅÖ");
+	filename = filename.replace(/&#8805;|&ge;/g,"ÅÜ");
+	filename = filename.replace(/&#8834;|&sub;/g,"Åº");
+	filename = filename.replace(/&#8835;|&sup;/g,"ÅΩ");
+	filename = filename.replace(/&#8810;/g,"Å·");
+	filename = filename.replace(/&#8811;/g,"Å‚");
+	filename = filename.replace(/&nsub;/g,"_");
+	filename = filename.replace(/&#8838;|&sube;/g,"Å∫");
+	filename = filename.replace(/&#8839;|&supe;/g,"Åª");
+	filename = filename.replace(/&oplus;/g,"_");
+	filename = filename.replace(/&otimes;/g,"_");
+	filename = filename.replace(/&#8869;|&perp;/g,"Å€");
+	filename = filename.replace(/&sdot;/g,"_");
+	filename = filename.replace(/&#131;/g,"_");
+
+	//ÉJÉ^ÉJÉi
+	filename = filename.replace(/&#12539;/g,"ÅE");
+
+	//ÉtÉ@ÉCÉãñºÇ…égÇ¶Ç»Ç¢ï∂éöÇëSäpÇ…Ç∑ÇÈ
+	filename =filename.replace(/\\/g,"Åè");
+	filename =filename.replace(/\//g,"Å^");
+	filename =filename.replace(/\:/g,"ÅF");
+	filename =filename.replace(/\,/g,"ÅC");
+	filename =filename.replace(/\;/g,"ÅG");
+	filename =filename.replace(/\*/g,"Åñ");
+	filename =filename.replace(/\?/g,"ÅH");
+	filename =filename.replace(/\"/g,"Åh");
+	filename =filename.replace(/\</g,"ÅÉ");
+	filename =filename.replace(/\>/g,"ÅÑ");
+	filename =filename.replace(/\|/g,"Åb");
+	return filename;
+}

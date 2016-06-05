@@ -1,0 +1,12 @@
+//Dorothy2
+//caption=test
+//version=1.0
+//hint=test
+//match=
+//author=xor
+//generator=
+//path=common
+//end
+function test(){
+	println('test');
+}

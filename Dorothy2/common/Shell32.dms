@@ -1,0 +1,53 @@
+//Dorothy2
+//caption=Shell32
+//version=1.00
+//hint=
+//match=
+//author=xor
+//path=common
+//end
+function Shell32(){
+	this.dll = new DynaCall;
+	this.dll.register('Shell32.dll','ShellExecuteA'	,'f=s','i=hssssl'	,'r=h');
+	this.dll.register('Shell32.dll','ShellExecuteEx','f=s','i=s'	,'r=h');
+	this.SHELLEXECUTEINFO = new Struct(
+		'cbSize:l',
+		'fMask:l',
+		'hWnd:l',
+		'lpVerb:s',
+		'lpFile:s',
+		'lpParameters:s',
+		'lpDirectory:s',
+		'nShow:l',
+		'hInstApp:l',
+		'lpIDList:l',　　　　//'これ以下のメンバはオプション
+		'lpClass:s',
+		'hkeyClass:l',
+		'dwHotKey:l',
+		'hIcon:l',
+		'hProcess:l'
+	);
+}
+,
+Shell32.prototype.ShellExecute = function(hWnd , lpOperation , lpFile , lpParameters , lpDirectory , nShowCmd){
+	return this.dll.ShellExecuteA(hWnd , lpOperation , lpFile , lpParameters , lpDirectory , nShowCmd);
+}
+,
+Shell32.prototype.ShellExecuteEx = function(fMask , hWnd , lpVerb , lpFile , lpParameters , lpDirectory , nShow){
+	this.SHELLEXECUTEINFO.cbSize = this.SHELLEXECUTEINFO.sizeOf();
+	this.SHELLEXECUTEINFO.fMask = fMask;
+	this.SHELLEXECUTEINFO.hWnd = hWnd;
+	this.SHELLEXECUTEINFO.lpVerb = lpVerb;
+	this.SHELLEXECUTEINFO.lpFile = lpFile;
+	this.SHELLEXECUTEINFO.lpParameters = lpParameters;
+	this.SHELLEXECUTEINFO.lpDirectory = lpDirectory;
+	this.SHELLEXECUTEINFO.nShow = nShow;
+	this.SHELLEXECUTEINFO.hInstApp = 0;
+	this.SHELLEXECUTEINFO.lpIDList = 0;
+	this.SHELLEXECUTEINFO.lpClass = '';
+	this.SHELLEXECUTEINFO.hkeyClass = 0;
+	this.SHELLEXECUTEINFO.dwHotKey = 0;
+	this.SHELLEXECUTEINFO.hIcon = 0;
+	this.SHELLEXECUTEINFO.hProcess = 0;
+	return this.dll.ShellExecuteEx(this.SHELLEXECUTEINFO);
+}

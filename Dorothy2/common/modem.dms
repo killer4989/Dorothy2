@@ -1,0 +1,181 @@
+//Dorothy2
+//caption=modem
+//version=1.0
+//hint=グローバルＩＰを換えます
+//match=
+//author=xor
+//path=common
+//end
+/*-------------------------------------
+	0--->ok
+	1--->エラー
+	2--->致命的なエラー
+	3--->時間外
+	4--->未設定／有効になっていない
+	5--->設定エラー
+-------------------------------------*/
+function modem(mode){
+	var ini = new Ini(Dorothy.path + 'system\menu\set\Modem.ini');
+	var modem      = ini.read('user' , 'modem'      , '');
+	var time1start = ini.read('user' , 'time1start' , '');
+	var time1end   = ini.read('user' , 'time1end'   , '');
+	var time2start = ini.read('user' , 'time2start' , '');
+	var time2end   = ini.read('user' , 'time2end'   , '');
+	var time3start = ini.read('user' , 'time3start' , '');
+	var time3end   = ini.read('user' , 'time3end'   , '');
+	var active     = (ini.read('user' , 'active'    , '0') == '1' );
+
+
+	//-----------------------------
+	//未設定／有効になっていない
+	//-----------------------------
+	if(!active){
+		return 4;
+	}
+
+	//-----------------------------
+	//設定エラー
+	//-----------------------------
+	if(modem == ''){
+		return 5;
+	}
+
+	var time;
+
+	var jikan = function(time1 , time2){
+		var s = /^(\d|[01]\d|2[0123]):([0-5]\d)$/;
+		var ret = '';
+		var t1,t2;
+		var now = new Date();
+		now = now.getHours() * 60 + now.getMinutes();
+		if(time1 == '' || time2 == ''){
+			return false;
+		}
+		if(time1.match(s)){
+			t1 = parseInt(RegExp.$1) * 60 + parseInt(RegExp.$2);
+		}
+		else{
+			return false;
+		}
+		if(time2.match(s)){
+			t2 = parseInt(RegExp.$1) * 60 + parseInt(RegExp.$2);
+		}
+		else{
+			return false;
+		}
+		if(t1 < t2){
+			if(t1 <= now && now <= t2){
+				return true;
+			}
+		}
+
+		if(t1 > t2){
+			if(t1 <= now){
+				return true;
+			}
+			if(now <= t2){
+				return true;
+			}
+		}
+		return false;
+	};
+
+	var jikan2 = function(time1 , time2){
+		var s = /^(\d|[01]\d|2[0123]):([0-5]\d)$/;
+		var ret = '';
+		var t1,t2;
+		var now = new Date();
+		now = now.getHours() * 60 + now.getMinutes();
+		if(time1 == '' || time2 == ''){
+			return 24 * 60;
+		}
+		if(time1.match(s)){
+			t1 = parseInt(RegExp.$1) * 60 + parseInt(RegExp.$2);
+		}
+		else{
+			return 24 * 60;
+		}
+		if(time2.match(s)){
+			t2 = parseInt(RegExp.$1) * 60 + parseInt(RegExp.$2);
+		}
+		else{
+			return 24 * 60;
+		}
+		if(t1 < t2){
+			if(now < t1){
+				return t1 - now;
+			}
+			if(now < t2){
+				return 0;
+			}
+			if(t2 < now){
+				return 24 * 60 - now + t1;
+			}
+		}
+
+		if(t1 > t2){
+			if(now < t2){
+				return 0;
+			}
+			if(now < t1){
+				return t1 - now;
+			}
+			if(t1 < now){
+				return 0;
+			}
+		}
+		return 24 * 60;
+	};
+	//---------------------------------------
+	//time
+	//---------------------------------------
+	var ret , fst;
+	if(!isUndefined(mode)){
+		if(mode == 'time'){
+			ret = jikan2(time1start , time1end);
+			fst = ret;
+			ret = jikan2(time2start , time2end);
+			if(ret < fst){
+				fst = ret;
+			}
+			ret = jikan2(time3start , time3end);
+			if(ret < fst){
+				fst = ret;
+			}
+		return fst;
+		}
+	}
+
+	var ret;
+	if(jikan(time1start , time1end)){
+		ret = 0;
+	}
+	else if(jikan(time2start , time2end)){
+		ret = 0;
+	}
+	else if(jikan(time3start , time3end)){
+		ret = 0;
+	}
+	else{
+		return 3;
+	}
+
+	if(!isUndefined(mode)){
+		if(mode == 'test'){
+			return 0;
+		}
+	}
+	try{
+		var d = file_load('system\modem\' + modem);
+		eval(d);
+		var ret = modem_ipChange();
+		modem_ipChange = null;
+		modem_setting = null;
+	}
+	catch(e){
+		println(e);
+		println('機種別スクリプトの呼出に失敗しました。');
+		return 1;
+	}
+	return ret;
+}

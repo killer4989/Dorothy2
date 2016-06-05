@@ -1,0 +1,25 @@
+//Dorothy2
+//caption=D&D text
+//version=1.0
+//hint=
+//match=
+//author=xor
+//path=system
+//end
+function(url){
+	var dir = new Directory(dorothy2_projectdata);
+	if(!dir.exists()){
+		dir.make();
+	}
+	//alert(files.length);
+	var http = new HTTP;
+	
+	var i , f ,d , url2;
+	if(url.indexOf('http://ime.nu/') == 0){
+		url = 'http://' + url.slice(14, url.length);
+	}
+	url2 = new URL(url);
+	http.getFile(url2.url , dorothy2_projectdata + url2.filename);
+	
+	msg('download èIóπ');
+}

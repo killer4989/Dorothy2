@@ -1,0 +1,47 @@
+//Dorothy2
+//caption=StringExtension
+//version=1.0
+//hint=StringExtension
+//match=
+//author=xor
+//path=common
+//end
+/*
+	s = new String('abc&#20837;&#27743;defg');
+	println(s.fromUTF16to8().fromUTF8toSJIS());		//abc“ü]defg
+*/
+
+String.prototype.fromUTF16to8 = function(){
+	var c , out2;
+	var out = new String;
+	var re = new RegExp('&#(\d+);');
+	re.input = this.text;
+	while(re.test(re.input)){
+		re.exec(re.input);
+		out += re.leftContext;
+		re.input = re.rightContext;
+		
+		c = RegExp.$1;
+		if ((c >= 0x0001) && (c <= 0x007F)) {
+			out2 = c;
+		} else if (c > 0x07FF) {
+			out2 = String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
+			out2 += String.fromCharCode(0x80 | ((c >>  6) & 0x3F));
+			out2 += String.fromCharCode(0x80 | ((c >>  0) & 0x3F));
+		} else {
+			out2 = String.fromCharCode(0xC0 | ((c >>  6) & 0x1F));
+			out2 += String.fromCharCode(0x80 | ((c >>  0) & 0x3F));
+		}
+		out += out2;
+	}
+	out += re.input;
+	return out;
+},
+
+String.prototype.fromUTF16toSJIS = function(){
+	return this.fromUTF16to8().fromUTF8toSJIS();
+},
+
+String.prototype.trimTag = function(){
+	return this.replace(/<[^>]*>/g , '');
+}
