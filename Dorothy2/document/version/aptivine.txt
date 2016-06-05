@@ -1,0 +1,5 @@
+aptivine は Irvine Uploader にアップロードされている Irvine 向けスクリプト等を
+半自動的にダウンロードするためのソフトウェアです。
+
+詳しくは以下のサイトをご覧ください。
+https://github.com/nodchip/aptivine
